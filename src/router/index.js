@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import Dashboard from '../views/Dashboard.vue';
 import TimelineView from '../views/TimelineView.vue';
 import HeatmapView from '../views/HeatmapView.vue';
+import CameraMonitorView from '@/views/CameraMonitorView.vue';
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/heatmap',
     name: 'heatmap',
     component: HeatmapView,
+  },
+  {
+    path: '/cameramonitor',
+    name: 'cameramonitor',
+    component: CameraMonitorView,
   },
   {
     path: '/about',
