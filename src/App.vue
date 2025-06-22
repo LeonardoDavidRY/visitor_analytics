@@ -11,6 +11,9 @@
         <router-link to="/heatmap" class="hover:text-green-600"
           >Heatmap</router-link
         >
+         <router-link to="/cameramonitor" class="hover:text-green-600"
+          >Cámara Monitor</router-link
+        >
       </div>
     </nav>
 
