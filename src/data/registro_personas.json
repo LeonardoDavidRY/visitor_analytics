@@ -1,0 +1,2002 @@
+[
+  {
+    "id": 1,
+    "id_camara": 3,
+    "latitude": 40.736028646362755,
+    "longitude": -74.00479357357273,
+    "timestamp": "2025-06-11T16:41:00Z",
+    "edad": 41,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 2,
+    "id_camara": 3,
+    "latitude": 40.74125109084952,
+    "longitude": -73.98848562802928,
+    "timestamp": "2025-06-11T21:14:00Z",
+    "edad": 44,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 3,
+    "id_camara": 1,
+    "latitude": 40.742440863278965,
+    "longitude": -74.00620816204899,
+    "timestamp": "2025-06-11T10:08:00Z",
+    "edad": 25,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 4,
+    "id_camara": 1,
+    "latitude": 40.741178088661215,
+    "longitude": -73.98901345807249,
+    "timestamp": "2025-06-11T19:03:00Z",
+    "edad": 56,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 5,
+    "id_camara": 3,
+    "latitude": 40.736181196785445,
+    "longitude": -74.00491723481701,
+    "timestamp": "2025-06-11T10:00:00Z",
+    "edad": 18,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 6,
+    "id_camara": 2,
+    "latitude": 40.74143311056334,
+    "longitude": -73.98842429101926,
+    "timestamp": "2025-06-11T19:50:00Z",
+    "edad": 18,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 7,
+    "id_camara": 3,
+    "latitude": 40.74119265064525,
+    "longitude": -73.98975266791125,
+    "timestamp": "2025-06-11T14:36:00Z",
+    "edad": 58,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 8,
+    "id_camara": 3,
+    "latitude": 40.70791630715456,
+    "longitude": -74.01103867147948,
+    "timestamp": "2025-06-11T18:37:00Z",
+    "edad": 18,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 9,
+    "id_camara": 1,
+    "latitude": 40.706941320155465,
+    "longitude": -74.01169643448927,
+    "timestamp": "2025-06-11T09:27:00Z",
+    "edad": 18,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 10,
+    "id_camara": 3,
+    "latitude": 40.70775308359626,
+    "longitude": -74.01146266216887,
+    "timestamp": "2025-06-11T07:19:00Z",
+    "edad": 43,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 11,
+    "id_camara": 2,
+    "latitude": 40.707639071448874,
+    "longitude": -74.01176316546069,
+    "timestamp": "2025-06-11T11:58:00Z",
+    "edad": 37,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 12,
+    "id_camara": 3,
+    "latitude": 40.728578305965364,
+    "longitude": -73.99680003417505,
+    "timestamp": "2025-06-11T07:39:00Z",
+    "edad": 51,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 13,
+    "id_camara": 3,
+    "latitude": 40.74130134528898,
+    "longitude": -73.98978905563509,
+    "timestamp": "2025-06-11T19:27:00Z",
+    "edad": 47,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 14,
+    "id_camara": 3,
+    "latitude": 40.70781236999687,
+    "longitude": -74.01133373174174,
+    "timestamp": "2025-06-11T17:37:00Z",
+    "edad": 53,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 15,
+    "id_camara": 3,
+    "latitude": 40.74261517499312,
+    "longitude": -74.00572194671706,
+    "timestamp": "2025-06-11T14:25:00Z",
+    "edad": 42,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 16,
+    "id_camara": 3,
+    "latitude": 40.74295280437572,
+    "longitude": -74.00569352834336,
+    "timestamp": "2025-06-11T09:42:00Z",
+    "edad": 59,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 17,
+    "id_camara": 2,
+    "latitude": 40.741583261485964,
+    "longitude": -73.99380439803944,
+    "timestamp": "2025-06-11T09:57:00Z",
+    "edad": 34,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 18,
+    "id_camara": 1,
+    "latitude": 40.72868414913904,
+    "longitude": -73.99661287694234,
+    "timestamp": "2025-06-11T16:23:00Z",
+    "edad": 48,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 19,
+    "id_camara": 2,
+    "latitude": 40.73598560667432,
+    "longitude": -74.00537400365347,
+    "timestamp": "2025-06-11T08:33:00Z",
+    "edad": 32,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 20,
+    "id_camara": 2,
+    "latitude": 40.735763133682646,
+    "longitude": -74.00540967243603,
+    "timestamp": "2025-06-11T19:07:00Z",
+    "edad": 59,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 21,
+    "id_camara": 2,
+    "latitude": 40.73622658202244,
+    "longitude": -74.00455191657399,
+    "timestamp": "2025-06-11T18:31:00Z",
+    "edad": 35,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 22,
+    "id_camara": 1,
+    "latitude": 40.73576510796717,
+    "longitude": -74.00537577075912,
+    "timestamp": "2025-06-11T06:37:00Z",
+    "edad": 37,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 23,
+    "id_camara": 1,
+    "latitude": 40.741974898772334,
+    "longitude": -73.99311954576086,
+    "timestamp": "2025-06-11T10:40:00Z",
+    "edad": 57,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 24,
+    "id_camara": 2,
+    "latitude": 40.74127364894531,
+    "longitude": -73.99379238452717,
+    "timestamp": "2025-06-11T07:44:00Z",
+    "edad": 51,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 25,
+    "id_camara": 1,
+    "latitude": 40.736080050131335,
+    "longitude": -74.00480481307847,
+    "timestamp": "2025-06-11T12:35:00Z",
+    "edad": 30,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 26,
+    "id_camara": 3,
+    "latitude": 40.735733650606626,
+    "longitude": -74.0049081701522,
+    "timestamp": "2025-06-11T15:05:00Z",
+    "edad": 30,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 27,
+    "id_camara": 1,
+    "latitude": 40.707887400188824,
+    "longitude": -74.01125570688666,
+    "timestamp": "2025-06-11T12:46:00Z",
+    "edad": 55,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 28,
+    "id_camara": 1,
+    "latitude": 40.72874820485835,
+    "longitude": -73.9969281690486,
+    "timestamp": "2025-06-11T12:38:00Z",
+    "edad": 45,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 29,
+    "id_camara": 2,
+    "latitude": 40.742542041154294,
+    "longitude": -74.0058506998525,
+    "timestamp": "2025-06-11T12:24:00Z",
+    "edad": 47,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 30,
+    "id_camara": 2,
+    "latitude": 40.741532623403565,
+    "longitude": -73.98986431878592,
+    "timestamp": "2025-06-11T17:33:00Z",
+    "edad": 56,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 31,
+    "id_camara": 3,
+    "latitude": 40.74249522308868,
+    "longitude": -74.00602377226386,
+    "timestamp": "2025-06-11T16:01:00Z",
+    "edad": 18,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 32,
+    "id_camara": 1,
+    "latitude": 40.74131178453643,
+    "longitude": -73.98944239130516,
+    "timestamp": "2025-06-11T16:28:00Z",
+    "edad": 27,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 33,
+    "id_camara": 3,
+    "latitude": 40.741740674155295,
+    "longitude": -73.988482295346,
+    "timestamp": "2025-06-11T12:19:00Z",
+    "edad": 36,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 34,
+    "id_camara": 2,
+    "latitude": 40.74188478985089,
+    "longitude": -73.98950940930372,
+    "timestamp": "2025-06-11T19:32:00Z",
+    "edad": 29,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 35,
+    "id_camara": 2,
+    "latitude": 40.74114883614835,
+    "longitude": -73.98916602383255,
+    "timestamp": "2025-06-11T20:49:00Z",
+    "edad": 37,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 36,
+    "id_camara": 1,
+    "latitude": 40.7077453247553,
+    "longitude": -74.01140174973827,
+    "timestamp": "2025-06-11T19:11:00Z",
+    "edad": 27,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 37,
+    "id_camara": 1,
+    "latitude": 40.74173343197811,
+    "longitude": -73.98823282853262,
+    "timestamp": "2025-06-11T21:01:00Z",
+    "edad": 60,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 38,
+    "id_camara": 1,
+    "latitude": 40.7409087438788,
+    "longitude": -73.98841966266598,
+    "timestamp": "2025-06-11T13:31:00Z",
+    "edad": 48,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 39,
+    "id_camara": 1,
+    "latitude": 40.70703423846311,
+    "longitude": -74.01098311018237,
+    "timestamp": "2025-06-11T13:11:00Z",
+    "edad": 50,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 40,
+    "id_camara": 1,
+    "latitude": 40.73632068994827,
+    "longitude": -74.00515923045037,
+    "timestamp": "2025-06-11T19:10:00Z",
+    "edad": 29,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 41,
+    "id_camara": 2,
+    "latitude": 40.74271547217952,
+    "longitude": -74.00649234307961,
+    "timestamp": "2025-06-11T20:56:00Z",
+    "edad": 31,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 42,
+    "id_camara": 2,
+    "latitude": 40.70714135319955,
+    "longitude": -74.01180894431262,
+    "timestamp": "2025-06-11T18:30:00Z",
+    "edad": 27,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 43,
+    "id_camara": 1,
+    "latitude": 40.735557761582044,
+    "longitude": -74.00526259829854,
+    "timestamp": "2025-06-11T19:02:00Z",
+    "edad": 25,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 44,
+    "id_camara": 2,
+    "latitude": 40.74198413087977,
+    "longitude": -73.99388413768598,
+    "timestamp": "2025-06-11T11:06:00Z",
+    "edad": 44,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 45,
+    "id_camara": 3,
+    "latitude": 40.741873045703066,
+    "longitude": -73.98774937800027,
+    "timestamp": "2025-06-11T16:12:00Z",
+    "edad": 34,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 46,
+    "id_camara": 2,
+    "latitude": 40.74290813154971,
+    "longitude": -74.00646000031291,
+    "timestamp": "2025-06-11T06:03:00Z",
+    "edad": 21,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 47,
+    "id_camara": 3,
+    "latitude": 40.736249740262195,
+    "longitude": -74.00507164754185,
+    "timestamp": "2025-06-11T09:53:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 48,
+    "id_camara": 3,
+    "latitude": 40.74285112199922,
+    "longitude": -74.00626080841398,
+    "timestamp": "2025-06-11T11:54:00Z",
+    "edad": 28,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 49,
+    "id_camara": 2,
+    "latitude": 40.74127524585301,
+    "longitude": -73.98849255470968,
+    "timestamp": "2025-06-11T19:24:00Z",
+    "edad": 25,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 50,
+    "id_camara": 2,
+    "latitude": 40.741611419381954,
+    "longitude": -73.98992220308833,
+    "timestamp": "2025-06-11T08:07:00Z",
+    "edad": 52,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 51,
+    "id_camara": 1,
+    "latitude": 40.72810055004256,
+    "longitude": -73.9966728578184,
+    "timestamp": "2025-06-11T10:38:00Z",
+    "edad": 42,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 52,
+    "id_camara": 3,
+    "latitude": 40.74094257662295,
+    "longitude": -73.98859453751217,
+    "timestamp": "2025-06-11T10:43:00Z",
+    "edad": 20,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 53,
+    "id_camara": 1,
+    "latitude": 40.741697975559156,
+    "longitude": -73.99386128025576,
+    "timestamp": "2025-06-11T20:58:00Z",
+    "edad": 51,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 54,
+    "id_camara": 3,
+    "latitude": 40.728412607782325,
+    "longitude": -73.99665457568355,
+    "timestamp": "2025-06-11T21:46:00Z",
+    "edad": 45,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 55,
+    "id_camara": 1,
+    "latitude": 40.74256738190439,
+    "longitude": -74.0064903408071,
+    "timestamp": "2025-06-11T16:59:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 56,
+    "id_camara": 1,
+    "latitude": 40.70764214872196,
+    "longitude": -74.01182822897438,
+    "timestamp": "2025-06-11T08:22:00Z",
+    "edad": 48,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 57,
+    "id_camara": 2,
+    "latitude": 40.74189066876558,
+    "longitude": -73.9930013354869,
+    "timestamp": "2025-06-11T12:12:00Z",
+    "edad": 34,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 58,
+    "id_camara": 3,
+    "latitude": 40.74105217844883,
+    "longitude": -73.98911409047359,
+    "timestamp": "2025-06-11T07:54:00Z",
+    "edad": 47,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 59,
+    "id_camara": 1,
+    "latitude": 40.742180039917095,
+    "longitude": -74.00615027953941,
+    "timestamp": "2025-06-11T18:19:00Z",
+    "edad": 33,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 60,
+    "id_camara": 1,
+    "latitude": 40.74174251703544,
+    "longitude": -73.99343321975587,
+    "timestamp": "2025-06-11T12:49:00Z",
+    "edad": 46,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 61,
+    "id_camara": 1,
+    "latitude": 40.7427867235748,
+    "longitude": -74.00571350852074,
+    "timestamp": "2025-06-11T16:27:00Z",
+    "edad": 22,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 62,
+    "id_camara": 2,
+    "latitude": 40.74106431671989,
+    "longitude": -73.98980407608077,
+    "timestamp": "2025-06-11T14:53:00Z",
+    "edad": 21,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 63,
+    "id_camara": 3,
+    "latitude": 40.74112062809749,
+    "longitude": -73.98817940603219,
+    "timestamp": "2025-06-11T08:00:00Z",
+    "edad": 30,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 64,
+    "id_camara": 2,
+    "latitude": 40.73566699121837,
+    "longitude": -74.00476249322783,
+    "timestamp": "2025-06-11T21:57:00Z",
+    "edad": 50,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 65,
+    "id_camara": 3,
+    "latitude": 40.728832046634416,
+    "longitude": -73.99703505320373,
+    "timestamp": "2025-06-11T07:52:00Z",
+    "edad": 43,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 66,
+    "id_camara": 3,
+    "latitude": 40.70749343314889,
+    "longitude": -74.01178300820278,
+    "timestamp": "2025-06-11T08:45:00Z",
+    "edad": 21,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 67,
+    "id_camara": 3,
+    "latitude": 40.74212998340787,
+    "longitude": -74.00618183005777,
+    "timestamp": "2025-06-11T12:35:00Z",
+    "edad": 23,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 68,
+    "id_camara": 1,
+    "latitude": 40.74180957738123,
+    "longitude": -73.98958574671943,
+    "timestamp": "2025-06-11T09:55:00Z",
+    "edad": 43,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 69,
+    "id_camara": 1,
+    "latitude": 40.70753401261198,
+    "longitude": -74.01129608771726,
+    "timestamp": "2025-06-11T15:39:00Z",
+    "edad": 49,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 70,
+    "id_camara": 1,
+    "latitude": 40.74170297642328,
+    "longitude": -73.98805167319335,
+    "timestamp": "2025-06-11T19:09:00Z",
+    "edad": 35,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 71,
+    "id_camara": 2,
+    "latitude": 40.70703163944005,
+    "longitude": -74.01169910531702,
+    "timestamp": "2025-06-11T21:43:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 72,
+    "id_camara": 1,
+    "latitude": 40.741431612283435,
+    "longitude": -73.98968401552474,
+    "timestamp": "2025-06-11T20:56:00Z",
+    "edad": 22,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 73,
+    "id_camara": 2,
+    "latitude": 40.741588045330076,
+    "longitude": -73.98943701143396,
+    "timestamp": "2025-06-11T19:52:00Z",
+    "edad": 38,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 74,
+    "id_camara": 2,
+    "latitude": 40.74182985310216,
+    "longitude": -73.98775088955617,
+    "timestamp": "2025-06-11T17:58:00Z",
+    "edad": 53,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 75,
+    "id_camara": 3,
+    "latitude": 40.70716910661687,
+    "longitude": -74.01127258716193,
+    "timestamp": "2025-06-11T20:27:00Z",
+    "edad": 29,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 76,
+    "id_camara": 3,
+    "latitude": 40.74211340440264,
+    "longitude": -73.99309088986546,
+    "timestamp": "2025-06-11T21:38:00Z",
+    "edad": 40,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 77,
+    "id_camara": 1,
+    "latitude": 40.736116474769325,
+    "longitude": -74.00456233574249,
+    "timestamp": "2025-06-11T17:10:00Z",
+    "edad": 35,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 78,
+    "id_camara": 3,
+    "latitude": 40.73615629576901,
+    "longitude": -74.00523959558302,
+    "timestamp": "2025-06-11T15:57:00Z",
+    "edad": 19,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 79,
+    "id_camara": 2,
+    "latitude": 40.72824060360617,
+    "longitude": -73.99701584818682,
+    "timestamp": "2025-06-11T13:30:00Z",
+    "edad": 58,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 80,
+    "id_camara": 1,
+    "latitude": 40.735626337331205,
+    "longitude": -74.00491080322331,
+    "timestamp": "2025-06-11T07:15:00Z",
+    "edad": 57,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 81,
+    "id_camara": 3,
+    "latitude": 40.70750721484914,
+    "longitude": -74.01184008440396,
+    "timestamp": "2025-06-11T08:29:00Z",
+    "edad": 53,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 82,
+    "id_camara": 1,
+    "latitude": 40.736062658758634,
+    "longitude": -74.005138154396,
+    "timestamp": "2025-06-11T13:19:00Z",
+    "edad": 20,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 83,
+    "id_camara": 3,
+    "latitude": 40.735827511285095,
+    "longitude": -74.00455544341037,
+    "timestamp": "2025-06-11T20:40:00Z",
+    "edad": 24,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 84,
+    "id_camara": 1,
+    "latitude": 40.73607929044953,
+    "longitude": -74.00541100713329,
+    "timestamp": "2025-06-11T15:10:00Z",
+    "edad": 54,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 85,
+    "id_camara": 1,
+    "latitude": 40.70787860849202,
+    "longitude": -74.01129370740671,
+    "timestamp": "2025-06-11T17:11:00Z",
+    "edad": 49,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 86,
+    "id_camara": 1,
+    "latitude": 40.742780145360925,
+    "longitude": -74.00634530930624,
+    "timestamp": "2025-06-11T12:42:00Z",
+    "edad": 30,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 87,
+    "id_camara": 1,
+    "latitude": 40.74138309435066,
+    "longitude": -73.99308638145827,
+    "timestamp": "2025-06-11T09:10:00Z",
+    "edad": 52,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 88,
+    "id_camara": 1,
+    "latitude": 40.74295790865927,
+    "longitude": -74.00571929465838,
+    "timestamp": "2025-06-11T21:01:00Z",
+    "edad": 32,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 89,
+    "id_camara": 1,
+    "latitude": 40.741489343576994,
+    "longitude": -73.9877655280782,
+    "timestamp": "2025-06-11T10:26:00Z",
+    "edad": 42,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 90,
+    "id_camara": 3,
+    "latitude": 40.741104482172396,
+    "longitude": -73.98777539667935,
+    "timestamp": "2025-06-11T07:49:00Z",
+    "edad": 35,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 91,
+    "id_camara": 1,
+    "latitude": 40.72852597294247,
+    "longitude": -73.99678729389011,
+    "timestamp": "2025-06-11T13:30:00Z",
+    "edad": 23,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 92,
+    "id_camara": 1,
+    "latitude": 40.74140232713267,
+    "longitude": -73.99317647068622,
+    "timestamp": "2025-06-11T12:15:00Z",
+    "edad": 24,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 93,
+    "id_camara": 2,
+    "latitude": 40.70750546803617,
+    "longitude": -74.0118251489118,
+    "timestamp": "2025-06-11T09:44:00Z",
+    "edad": 40,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 94,
+    "id_camara": 2,
+    "latitude": 40.740888242724075,
+    "longitude": -73.98982568030912,
+    "timestamp": "2025-06-11T21:10:00Z",
+    "edad": 22,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 95,
+    "id_camara": 1,
+    "latitude": 40.728509910175234,
+    "longitude": -73.99728842047111,
+    "timestamp": "2025-06-11T10:58:00Z",
+    "edad": 34,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 96,
+    "id_camara": 2,
+    "latitude": 40.74107668695676,
+    "longitude": -73.98910302531411,
+    "timestamp": "2025-06-11T06:22:00Z",
+    "edad": 39,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 97,
+    "id_camara": 3,
+    "latitude": 40.735770496485465,
+    "longitude": -74.005183872518,
+    "timestamp": "2025-06-11T20:11:00Z",
+    "edad": 43,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 98,
+    "id_camara": 2,
+    "latitude": 40.74176867943884,
+    "longitude": -73.99322702312575,
+    "timestamp": "2025-06-11T14:28:00Z",
+    "edad": 33,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 99,
+    "id_camara": 2,
+    "latitude": 40.73616826077022,
+    "longitude": -74.00471003260716,
+    "timestamp": "2025-06-11T07:09:00Z",
+    "edad": 39,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 100,
+    "id_camara": 2,
+    "latitude": 40.74200221495876,
+    "longitude": -73.99307348938622,
+    "timestamp": "2025-06-11T21:41:00Z",
+    "edad": 54,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 101,
+    "id_camara": 2,
+    "latitude": 40.74125121049258,
+    "longitude": -73.98986592387503,
+    "timestamp": "2025-06-11T20:19:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 102,
+    "id_camara": 3,
+    "latitude": 40.728273604240385,
+    "longitude": -73.99682980172338,
+    "timestamp": "2025-06-11T12:00:00Z",
+    "edad": 41,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 103,
+    "id_camara": 3,
+    "latitude": 40.70747769479351,
+    "longitude": -74.01146916288221,
+    "timestamp": "2025-06-11T08:18:00Z",
+    "edad": 54,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 104,
+    "id_camara": 1,
+    "latitude": 40.73542495343557,
+    "longitude": -74.00466037597762,
+    "timestamp": "2025-06-11T09:45:00Z",
+    "edad": 56,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 105,
+    "id_camara": 2,
+    "latitude": 40.70742471599719,
+    "longitude": -74.01169170543699,
+    "timestamp": "2025-06-11T17:12:00Z",
+    "edad": 33,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 106,
+    "id_camara": 3,
+    "latitude": 40.707743471428614,
+    "longitude": -74.01136517218882,
+    "timestamp": "2025-06-11T07:45:00Z",
+    "edad": 59,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 107,
+    "id_camara": 2,
+    "latitude": 40.74120536717015,
+    "longitude": -73.98797665135478,
+    "timestamp": "2025-06-11T06:55:00Z",
+    "edad": 59,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 108,
+    "id_camara": 2,
+    "latitude": 40.7411074373557,
+    "longitude": -73.98960085021999,
+    "timestamp": "2025-06-11T21:14:00Z",
+    "edad": 37,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 109,
+    "id_camara": 3,
+    "latitude": 40.742008193034685,
+    "longitude": -73.99293997681917,
+    "timestamp": "2025-06-11T06:25:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 110,
+    "id_camara": 3,
+    "latitude": 40.73624019738749,
+    "longitude": -74.00453798590397,
+    "timestamp": "2025-06-11T19:13:00Z",
+    "edad": 21,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 111,
+    "id_camara": 3,
+    "latitude": 40.74297844240027,
+    "longitude": -74.00567066829201,
+    "timestamp": "2025-06-11T12:20:00Z",
+    "edad": 37,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 112,
+    "id_camara": 1,
+    "latitude": 40.74097061335351,
+    "longitude": -73.9882766235779,
+    "timestamp": "2025-06-11T07:50:00Z",
+    "edad": 44,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 113,
+    "id_camara": 3,
+    "latitude": 40.707849934631305,
+    "longitude": -74.01156338414619,
+    "timestamp": "2025-06-11T06:15:00Z",
+    "edad": 35,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 114,
+    "id_camara": 1,
+    "latitude": 40.74266247410886,
+    "longitude": -74.00589411262898,
+    "timestamp": "2025-06-11T20:35:00Z",
+    "edad": 44,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 115,
+    "id_camara": 2,
+    "latitude": 40.741349760933346,
+    "longitude": -73.98975736424431,
+    "timestamp": "2025-06-11T21:55:00Z",
+    "edad": 59,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 116,
+    "id_camara": 2,
+    "latitude": 40.740874962827284,
+    "longitude": -73.98828876625578,
+    "timestamp": "2025-06-11T08:58:00Z",
+    "edad": 45,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 117,
+    "id_camara": 1,
+    "latitude": 40.74247066960831,
+    "longitude": -74.00627199905554,
+    "timestamp": "2025-06-11T06:33:00Z",
+    "edad": 22,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 118,
+    "id_camara": 1,
+    "latitude": 40.74160515032006,
+    "longitude": -73.99293390225317,
+    "timestamp": "2025-06-11T14:45:00Z",
+    "edad": 30,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 119,
+    "id_camara": 1,
+    "latitude": 40.70781678794645,
+    "longitude": -74.01113639424386,
+    "timestamp": "2025-06-11T12:26:00Z",
+    "edad": 48,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 120,
+    "id_camara": 2,
+    "latitude": 40.741680776830016,
+    "longitude": -73.98835002334651,
+    "timestamp": "2025-06-11T15:49:00Z",
+    "edad": 41,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 121,
+    "id_camara": 1,
+    "latitude": 40.73562865213255,
+    "longitude": -74.00501273874784,
+    "timestamp": "2025-06-11T08:28:00Z",
+    "edad": 52,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 122,
+    "id_camara": 2,
+    "latitude": 40.74197146481365,
+    "longitude": -73.99378285500566,
+    "timestamp": "2025-06-11T14:59:00Z",
+    "edad": 60,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 123,
+    "id_camara": 1,
+    "latitude": 40.70748194419975,
+    "longitude": -74.01170512779346,
+    "timestamp": "2025-06-11T07:16:00Z",
+    "edad": 58,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 124,
+    "id_camara": 1,
+    "latitude": 40.741110822495855,
+    "longitude": -73.98854592939043,
+    "timestamp": "2025-06-11T13:17:00Z",
+    "edad": 56,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 125,
+    "id_camara": 2,
+    "latitude": 40.741086448768485,
+    "longitude": -73.98855303234126,
+    "timestamp": "2025-06-11T09:30:00Z",
+    "edad": 60,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 126,
+    "id_camara": 1,
+    "latitude": 40.74143401459367,
+    "longitude": -73.98827418415199,
+    "timestamp": "2025-06-11T18:55:00Z",
+    "edad": 28,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 127,
+    "id_camara": 1,
+    "latitude": 40.74112094054732,
+    "longitude": -73.98922786515132,
+    "timestamp": "2025-06-11T07:40:00Z",
+    "edad": 28,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 128,
+    "id_camara": 2,
+    "latitude": 40.70706369360755,
+    "longitude": -74.01106505657874,
+    "timestamp": "2025-06-11T06:53:00Z",
+    "edad": 46,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 129,
+    "id_camara": 3,
+    "latitude": 40.728809003785734,
+    "longitude": -73.99676423363165,
+    "timestamp": "2025-06-11T11:16:00Z",
+    "edad": 24,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 130,
+    "id_camara": 2,
+    "latitude": 40.741493944547884,
+    "longitude": -73.98823750758638,
+    "timestamp": "2025-06-11T18:22:00Z",
+    "edad": 18,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 131,
+    "id_camara": 3,
+    "latitude": 40.74164751008512,
+    "longitude": -73.98955898217066,
+    "timestamp": "2025-06-11T06:38:00Z",
+    "edad": 46,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 132,
+    "id_camara": 1,
+    "latitude": 40.74166095970293,
+    "longitude": -73.98970910132333,
+    "timestamp": "2025-06-11T21:58:00Z",
+    "edad": 24,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 133,
+    "id_camara": 1,
+    "latitude": 40.74169002315552,
+    "longitude": -73.98922929842806,
+    "timestamp": "2025-06-11T15:57:00Z",
+    "edad": 45,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 134,
+    "id_camara": 2,
+    "latitude": 40.70729805402698,
+    "longitude": -74.01148639086816,
+    "timestamp": "2025-06-11T16:28:00Z",
+    "edad": 31,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 135,
+    "id_camara": 2,
+    "latitude": 40.73553223419797,
+    "longitude": -74.00455372761283,
+    "timestamp": "2025-06-11T15:25:00Z",
+    "edad": 58,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 136,
+    "id_camara": 2,
+    "latitude": 40.74297126463953,
+    "longitude": -74.00595602365075,
+    "timestamp": "2025-06-11T14:16:00Z",
+    "edad": 55,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 137,
+    "id_camara": 2,
+    "latitude": 40.70766868807614,
+    "longitude": -74.01127256840708,
+    "timestamp": "2025-06-11T18:00:00Z",
+    "edad": 31,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 138,
+    "id_camara": 1,
+    "latitude": 40.74128930143302,
+    "longitude": -73.99369920611491,
+    "timestamp": "2025-06-11T10:33:00Z",
+    "edad": 43,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 139,
+    "id_camara": 1,
+    "latitude": 40.73577415607327,
+    "longitude": -74.00523354268076,
+    "timestamp": "2025-06-11T08:34:00Z",
+    "edad": 54,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 140,
+    "id_camara": 2,
+    "latitude": 40.72821522540578,
+    "longitude": -73.99730929412156,
+    "timestamp": "2025-06-11T08:08:00Z",
+    "edad": 40,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 141,
+    "id_camara": 2,
+    "latitude": 40.74220364283674,
+    "longitude": -74.00622791695845,
+    "timestamp": "2025-06-11T14:36:00Z",
+    "edad": 32,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 142,
+    "id_camara": 1,
+    "latitude": 40.742719406080624,
+    "longitude": -74.00570975183253,
+    "timestamp": "2025-06-11T15:12:00Z",
+    "edad": 35,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 143,
+    "id_camara": 1,
+    "latitude": 40.74267465183841,
+    "longitude": -74.00619746334544,
+    "timestamp": "2025-06-11T07:12:00Z",
+    "edad": 36,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 144,
+    "id_camara": 2,
+    "latitude": 40.72850889514486,
+    "longitude": -73.99731965617605,
+    "timestamp": "2025-06-11T11:21:00Z",
+    "edad": 32,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 145,
+    "id_camara": 2,
+    "latitude": 40.74200846852356,
+    "longitude": -73.99390554119134,
+    "timestamp": "2025-06-11T10:07:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 146,
+    "id_camara": 2,
+    "latitude": 40.73623954862869,
+    "longitude": -74.00541053284226,
+    "timestamp": "2025-06-11T17:17:00Z",
+    "edad": 25,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 147,
+    "id_camara": 2,
+    "latitude": 40.74182128297394,
+    "longitude": -73.9893441605803,
+    "timestamp": "2025-06-11T11:37:00Z",
+    "edad": 55,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 148,
+    "id_camara": 3,
+    "latitude": 40.74126173730126,
+    "longitude": -73.98779916152122,
+    "timestamp": "2025-06-11T18:26:00Z",
+    "edad": 47,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 149,
+    "id_camara": 2,
+    "latitude": 40.728673742365075,
+    "longitude": -73.99680284035328,
+    "timestamp": "2025-06-11T06:01:00Z",
+    "edad": 50,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 150,
+    "id_camara": 2,
+    "latitude": 40.707823759503874,
+    "longitude": -74.01102685831563,
+    "timestamp": "2025-06-11T12:10:00Z",
+    "edad": 20,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 151,
+    "id_camara": 3,
+    "latitude": 40.707003320746914,
+    "longitude": -74.01172558325835,
+    "timestamp": "2025-06-11T09:01:00Z",
+    "edad": 30,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 152,
+    "id_camara": 3,
+    "latitude": 40.74101560788653,
+    "longitude": -73.98918661157586,
+    "timestamp": "2025-06-11T06:30:00Z",
+    "edad": 26,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 153,
+    "id_camara": 3,
+    "latitude": 40.735995573564225,
+    "longitude": -74.00453697091648,
+    "timestamp": "2025-06-11T18:23:00Z",
+    "edad": 39,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 154,
+    "id_camara": 1,
+    "latitude": 40.7410778863182,
+    "longitude": -73.98829207892088,
+    "timestamp": "2025-06-11T19:13:00Z",
+    "edad": 48,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 155,
+    "id_camara": 1,
+    "latitude": 40.735685292648974,
+    "longitude": -74.00510437670083,
+    "timestamp": "2025-06-11T08:01:00Z",
+    "edad": 55,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 156,
+    "id_camara": 2,
+    "latitude": 40.7077124316422,
+    "longitude": -74.01089110873035,
+    "timestamp": "2025-06-11T17:54:00Z",
+    "edad": 44,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 157,
+    "id_camara": 3,
+    "latitude": 40.74148275846126,
+    "longitude": -73.99338769921157,
+    "timestamp": "2025-06-11T15:32:00Z",
+    "edad": 43,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 158,
+    "id_camara": 1,
+    "latitude": 40.74160510829879,
+    "longitude": -73.99327760384182,
+    "timestamp": "2025-06-11T19:50:00Z",
+    "edad": 49,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 159,
+    "id_camara": 3,
+    "latitude": 40.74215808398005,
+    "longitude": -73.9931572903528,
+    "timestamp": "2025-06-11T06:43:00Z",
+    "edad": 44,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 160,
+    "id_camara": 2,
+    "latitude": 40.72839004183743,
+    "longitude": -73.99724127113234,
+    "timestamp": "2025-06-11T09:53:00Z",
+    "edad": 48,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 161,
+    "id_camara": 1,
+    "latitude": 40.707904303242586,
+    "longitude": -74.01135833671023,
+    "timestamp": "2025-06-11T14:57:00Z",
+    "edad": 51,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 162,
+    "id_camara": 1,
+    "latitude": 40.73543574563441,
+    "longitude": -74.00488282852099,
+    "timestamp": "2025-06-11T06:10:00Z",
+    "edad": 33,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 163,
+    "id_camara": 2,
+    "latitude": 40.741422913679116,
+    "longitude": -73.98762625919711,
+    "timestamp": "2025-06-11T10:20:00Z",
+    "edad": 37,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 164,
+    "id_camara": 1,
+    "latitude": 40.7284477553117,
+    "longitude": -73.99698139874324,
+    "timestamp": "2025-06-11T19:25:00Z",
+    "edad": 41,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 165,
+    "id_camara": 3,
+    "latitude": 40.74273652741385,
+    "longitude": -74.00581053655637,
+    "timestamp": "2025-06-11T06:09:00Z",
+    "edad": 31,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 166,
+    "id_camara": 3,
+    "latitude": 40.74102804783152,
+    "longitude": -73.98807772554838,
+    "timestamp": "2025-06-11T20:37:00Z",
+    "edad": 52,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 167,
+    "id_camara": 3,
+    "latitude": 40.736366568427805,
+    "longitude": -74.00477488901105,
+    "timestamp": "2025-06-11T18:22:00Z",
+    "edad": 27,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 168,
+    "id_camara": 3,
+    "latitude": 40.72893012573009,
+    "longitude": -73.99731127603319,
+    "timestamp": "2025-06-11T09:29:00Z",
+    "edad": 27,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 169,
+    "id_camara": 2,
+    "latitude": 40.7361159274397,
+    "longitude": -74.00460837646864,
+    "timestamp": "2025-06-11T09:45:00Z",
+    "edad": 39,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 170,
+    "id_camara": 1,
+    "latitude": 40.73579203910175,
+    "longitude": -74.00510194261452,
+    "timestamp": "2025-06-11T14:36:00Z",
+    "edad": 27,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 171,
+    "id_camara": 1,
+    "latitude": 40.70775460817439,
+    "longitude": -74.01129819345141,
+    "timestamp": "2025-06-11T21:02:00Z",
+    "edad": 25,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 172,
+    "id_camara": 1,
+    "latitude": 40.74179736721181,
+    "longitude": -73.9884801433266,
+    "timestamp": "2025-06-11T21:45:00Z",
+    "edad": 32,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 173,
+    "id_camara": 3,
+    "latitude": 40.73594894559029,
+    "longitude": -74.00514532126266,
+    "timestamp": "2025-06-11T06:40:00Z",
+    "edad": 25,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 174,
+    "id_camara": 3,
+    "latitude": 40.72840681783705,
+    "longitude": -73.9967821879895,
+    "timestamp": "2025-06-11T13:34:00Z",
+    "edad": 20,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 175,
+    "id_camara": 2,
+    "latitude": 40.707167735554115,
+    "longitude": -74.01145097357056,
+    "timestamp": "2025-06-11T19:12:00Z",
+    "edad": 54,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 176,
+    "id_camara": 3,
+    "latitude": 40.73624500730268,
+    "longitude": -74.00455724379997,
+    "timestamp": "2025-06-11T20:39:00Z",
+    "edad": 28,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 177,
+    "id_camara": 2,
+    "latitude": 40.72854022864154,
+    "longitude": -73.99721346710973,
+    "timestamp": "2025-06-11T17:40:00Z",
+    "edad": 41,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 178,
+    "id_camara": 1,
+    "latitude": 40.74114510560823,
+    "longitude": -73.98911605087063,
+    "timestamp": "2025-06-11T06:10:00Z",
+    "edad": 53,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 179,
+    "id_camara": 3,
+    "latitude": 40.728760362016914,
+    "longitude": -73.99672420674564,
+    "timestamp": "2025-06-11T14:52:00Z",
+    "edad": 25,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 180,
+    "id_camara": 1,
+    "latitude": 40.73584169400424,
+    "longitude": -74.00459509246124,
+    "timestamp": "2025-06-11T20:24:00Z",
+    "edad": 25,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 181,
+    "id_camara": 2,
+    "latitude": 40.742750279127506,
+    "longitude": -74.00589035390477,
+    "timestamp": "2025-06-11T17:16:00Z",
+    "edad": 30,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 182,
+    "id_camara": 3,
+    "latitude": 40.7078775894718,
+    "longitude": -74.01175053354258,
+    "timestamp": "2025-06-11T14:44:00Z",
+    "edad": 44,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 183,
+    "id_camara": 1,
+    "latitude": 40.74138997860022,
+    "longitude": -73.98850589002903,
+    "timestamp": "2025-06-11T13:00:00Z",
+    "edad": 54,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 184,
+    "id_camara": 3,
+    "latitude": 40.72893800185887,
+    "longitude": -73.99735154023364,
+    "timestamp": "2025-06-11T09:05:00Z",
+    "edad": 34,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 185,
+    "id_camara": 2,
+    "latitude": 40.73539211951965,
+    "longitude": -74.00540465823285,
+    "timestamp": "2025-06-11T07:34:00Z",
+    "edad": 40,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 186,
+    "id_camara": 2,
+    "latitude": 40.7070083571729,
+    "longitude": -74.01109453239062,
+    "timestamp": "2025-06-11T12:21:00Z",
+    "edad": 24,
+    "genero": "masculino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 187,
+    "id_camara": 1,
+    "latitude": 40.74139378408051,
+    "longitude": -73.99328032536393,
+    "timestamp": "2025-06-11T07:41:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 188,
+    "id_camara": 1,
+    "latitude": 40.740894179711496,
+    "longitude": -73.98848294902047,
+    "timestamp": "2025-06-11T14:34:00Z",
+    "edad": 59,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 189,
+    "id_camara": 2,
+    "latitude": 40.742050252621745,
+    "longitude": -73.99325189565413,
+    "timestamp": "2025-06-11T10:38:00Z",
+    "edad": 32,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 190,
+    "id_camara": 1,
+    "latitude": 40.70786315644333,
+    "longitude": -74.0110584573252,
+    "timestamp": "2025-06-11T13:13:00Z",
+    "edad": 43,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 191,
+    "id_camara": 1,
+    "latitude": 40.741528324121724,
+    "longitude": -73.98813555478722,
+    "timestamp": "2025-06-11T11:32:00Z",
+    "edad": 47,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 192,
+    "id_camara": 1,
+    "latitude": 40.73602139011736,
+    "longitude": -74.0049417010409,
+    "timestamp": "2025-06-11T18:50:00Z",
+    "edad": 26,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  },
+  {
+    "id": 193,
+    "id_camara": 2,
+    "latitude": 40.73595009989482,
+    "longitude": -74.00448242397748,
+    "timestamp": "2025-06-11T19:46:00Z",
+    "edad": 25,
+    "genero": "masculino",
+    "tipo": "docente"
+  },
+  {
+    "id": 194,
+    "id_camara": 3,
+    "latitude": 40.72883656521754,
+    "longitude": -73.99716355846627,
+    "timestamp": "2025-06-11T17:27:00Z",
+    "edad": 31,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 195,
+    "id_camara": 2,
+    "latitude": 40.728141043274555,
+    "longitude": -73.9964552251002,
+    "timestamp": "2025-06-11T10:12:00Z",
+    "edad": 40,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 196,
+    "id_camara": 2,
+    "latitude": 40.74167963208523,
+    "longitude": -73.99295567215397,
+    "timestamp": "2025-06-11T11:00:00Z",
+    "edad": 60,
+    "genero": "femenino",
+    "tipo": "docente"
+  },
+  {
+    "id": 197,
+    "id_camara": 1,
+    "latitude": 40.74169682185743,
+    "longitude": -73.99293135678028,
+    "timestamp": "2025-06-11T17:27:00Z",
+    "edad": 52,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 198,
+    "id_camara": 2,
+    "latitude": 40.74281169344238,
+    "longitude": -74.00621718969045,
+    "timestamp": "2025-06-11T15:46:00Z",
+    "edad": 60,
+    "genero": "masculino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 199,
+    "id_camara": 1,
+    "latitude": 40.74178026311864,
+    "longitude": -73.98933706345274,
+    "timestamp": "2025-06-11T18:45:00Z",
+    "edad": 25,
+    "genero": "femenino",
+    "tipo": "estudiante"
+  },
+  {
+    "id": 200,
+    "id_camara": 1,
+    "latitude": 40.735419220455675,
+    "longitude": -74.00457146337928,
+    "timestamp": "2025-06-11T19:52:00Z",
+    "edad": 31,
+    "genero": "femenino",
+    "tipo": "administrativo"
+  }
+]
