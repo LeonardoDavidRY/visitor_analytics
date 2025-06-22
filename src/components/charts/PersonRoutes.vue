@@ -8,77 +8,136 @@
         <option v-for="id in personIds" :key="id" :value="id">{{ id }}</option>
       </select>
     </div>
-    <l-map
-      style="height: 500px; width: 100%; max-width: 900px; margin: 0 auto;"
-      :zoom="mapZoom"
-      :center="mapCenter"
-      :options="{ zoomControl: true }"
+    <div
+      class="rounded-xl shadow-md overflow-hidden border border-gray-200 flex justify-center"
     >
-      <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <template v-for="(route, id, idx) in filteredRoutes" :key="'line-' + id">
-        <l-polyline
-          :lat-lngs="route.map(p => [p.latitude, p.longitude])"
-          :color="routeColors[idx % routeColors.length]"
-        />
-        <l-marker
-          v-for="(point, i) in route"
-          :key="'marker-' + id + '-' + i"
-          :lat-lng="[point.latitude, point.longitude]"
-        >
-          <l-popup>
-            Persona ID: {{ id }}<br />
-            Cámara {{ point.id_camara }}<br />
-            {{ point.latitude }}, {{ point.longitude }}<br />
-            {{ point.timestamp }}
-          </l-popup>
-        </l-marker>
-      </template>
-    </l-map>
+      <div id="routesmap" class="h-[800px] w-[1200px]"></div>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
-import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from 'vue3-leaflet';
+<script>
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import personas from '@/data/registro_personas_biblioteca.json';
+import data from '@/data/registro_personas_biblioteca.json';
 
-// Agrupa los puntos por persona y los ordena por timestamp
-const routesByPerson = {};
-personas.forEach((p) => {
-  const id = String(p.id); // Asegura que el id sea string para el filtro
-  if (!routesByPerson[id]) routesByPerson[id] = [];
-  routesByPerson[id].push(p);
-});
-Object.values(routesByPerson).forEach(routeArr => {
-  routeArr.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+// Fix para los iconos de Leaflet en Webpack/Vue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-// IDs únicos de personas (como string)
-const personIds = Object.keys(routesByPerson);
+export default {
+  name: 'PersonRoutesMap',
+  data() {
+    return {
+      map: null,
+      polylines: [],
+      markers: [],
+      selectedId: '',
+      personIds: [],
+      routesByPerson: {},
+    };
+  },
+  mounted() {
+    // Agrupa los puntos por persona y los ordena por timestamp
+    const routesByPerson = {};
+    data.forEach((p) => {
+      const id = String(p.id);
+      if (!routesByPerson[id]) routesByPerson[id] = [];
+      routesByPerson[id].push(p);
+    });
+    Object.values(routesByPerson).forEach(routeArr => {
+      routeArr.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    });
+    this.routesByPerson = routesByPerson;
+    this.personIds = Object.keys(routesByPerson);
 
-// Filtro
-const selectedId = ref('');
+    // Inicializa el mapa
+    this.map = L.map('routesmap', {
+      maxZoom: 21,
+      minZoom: 1,
+    }).setView([-0.19834, -78.50402], 20);
 
-// Rutas filtradas
-const filteredRoutes = computed(() => {
-  if (!selectedId.value) return routesByPerson;
-  return { [selectedId.value]: routesByPerson[selectedId.value] };
-});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 21,
+    }).addTo(this.map);
 
-// Centro y zoom del mapa
-const mapCenter = computed(() => {
-  // Busca el primer punto de la(s) ruta(s) filtrada(s)
-  const firstRoute = Object.values(filteredRoutes.value)[0];
-  if (firstRoute && firstRoute[0]) {
-    return [firstRoute[0].latitude, firstRoute[0].longitude];
-  }
-  return [-0.19834, -78.50402]; // Quito
-});
-const mapZoom = 17;
+    this.drawRoutes();
 
-// Colores para las rutas
-const routeColors = [
-  'blue', 'red', 'green', 'orange', 'purple', 'brown', 'magenta', 'teal', 'black'
-];
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 200);
+  },
+  watch: {
+    selectedId() {
+      this.drawRoutes();
+    },
+  },
+  methods: {
+    drawRoutes() {
+      // Limpia polylines y markers anteriores
+      this.polylines.forEach(poly => this.map.removeLayer(poly));
+      this.markers.forEach(marker => this.map.removeLayer(marker));
+      this.polylines = [];
+      this.markers = [];
+
+      // Decide qué rutas mostrar
+      const routes = this.selectedId
+        ? { [this.selectedId]: this.routesByPerson[this.selectedId] }
+        : this.routesByPerson;
+
+      // Colores para las rutas
+      const routeColors = [
+        'blue', 'red', 'green', 'orange', 'purple', 'brown', 'magenta', 'teal', 'black'
+      ];
+
+      let idx = 0;
+      for (const [id, route] of Object.entries(routes)) {
+        if (!route || route.length === 0) continue;
+        const latlngs = route.map(p => [p.latitude, p.longitude]);
+        const polyline = L.polyline(latlngs, {
+          color: routeColors[idx % routeColors.length],
+          weight: 5,
+          opacity: 0.7,
+        }).addTo(this.map);
+        this.polylines.push(polyline);
+
+        // Markers con popup
+        route.forEach((point, i) => {
+          const marker = L.marker([point.latitude, point.longitude])
+            .addTo(this.map)
+            .bindPopup(
+              `Persona ID: ${id}<br>
+              Cámara ${point.id_camara}<br>
+              ${point.latitude}, ${point.longitude}<br>
+              ${point.timestamp}`
+            );
+          this.markers.push(marker);
+        });
+        idx++;
+      }
+
+      // Centra el mapa en la primera ruta mostrada
+      const firstRoute = Object.values(routes)[0];
+      if (firstRoute && firstRoute[0]) {
+        this.map.setView([firstRoute[0].latitude, firstRoute[0].longitude], 20);
+      }
+    },
+  },
+};
 </script>
+
+<style scoped>
+#routesmap {
+  min-height: 600px;
+  min-width: 900px;
+  height: 800px;
+  width: 1200px;
+  z-index: 1;
+}
+</style>
