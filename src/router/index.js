@@ -4,6 +4,11 @@ import Dashboard from '../views/Dashboard.vue';
 import TimelineView from '../views/TimelineView.vue';
 import HeatmapView from '../views/HeatmapView.vue';
 import CameraMonitorView from '@/views/CameraMonitorView.vue';
+import AgeBarView from '@/views/AgeBarView.vue';
+import TypePieChart from '@/components/charts/TypePieChart.vue';
+import LibraryMap from '@/components/charts/LibraryMap.vue';
+import PersonRoutesView from '@/views/PersonRoutesView.vue';
+
 
 const routes = [
   {
@@ -22,9 +27,29 @@ const routes = [
     component: TimelineView,
   },
   {
+    path: '/agebar',
+    name: 'agebar',
+    component: AgeBarView,
+  },
+  {
+    path: '/typepie',
+    name: 'typepie',
+    component: TypePieChart,
+  },
+  {
+    path: '/librarymap',
+    name: 'librarymap',
+    component: LibraryMap,
+  },
+  {
     path: '/heatmap',
     name: 'heatmap',
     component: HeatmapView,
+  },
+  {
+    path: '/personroutes',
+    name: 'personroutes',
+    component: PersonRoutesView,
   },
   {
     path: '/cameramonitor',

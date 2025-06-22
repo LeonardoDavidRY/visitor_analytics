@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import HeatmapChart from '@/components/charts/HeatmapChart.vue';
+import HeatmapChart from '@/components/charts/HeatmapChart.vue'
 
 export default {
   name: 'HeatmapView',
   components: {
     HeatmapChart,
   },
-};
+}
 </script>

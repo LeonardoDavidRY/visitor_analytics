@@ -1,40 +1,53 @@
-<!-- src/components/HeatmapChart.vue -->
 <template>
-  <div>
-    <h2 class="text-xl font-semibold mb-4">Mapa de calor de visitantes</h2>
-    <div id="heatmap" style="height: 500px"></div>
+  <div
+    class="rounded-xl shadow-md overflow-hidden border border-gray-200 flex justify-center items-center"
+  >
+    <div id="heatmap" class="h-[800px] w-[1200px]"></div>
   </div>
 </template>
 
-<script setup>
-import { onMounted } from 'vue';
+<script>
 import L from 'leaflet';
 import 'leaflet.heat';
-import { getHeatmapData } from '@/data/mockData';
+import data from '@/data/registro_personas_biblioteca.json';
 
-onMounted(() => {
-  const heatmapData = getHeatmapData().map((d) => [
-    d.location[0], // lat
-    d.location[1], // lng
-    d.intensity / 100, // intensidad normalizada
-  ]);
+export default {
+  name: 'HeatmapChart',
+  mounted() {
+    // Permitir más zoom (hasta 21)
+    const map = L.map('heatmap', {
+      maxZoom: 21,
+      minZoom: 1,
+    }).setView([-0.19834, -78.50402], 20);
 
-  const map = L.map('heatmap').setView([-0.1812, -78.4683], 17);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 21,
+    }).addTo(map);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-  }).addTo(map);
+    const heatPoints = data.map((item) => [item.latitude, item.longitude, 1]);
 
-  L.heatLayer(heatmapData, {
-    radius: 25,
-    blur: 15,
-    maxZoom: 18,
-  }).addTo(map);
-});
+    L.heatLayer(heatPoints, {
+      radius: 25,
+      blur: 15,
+      maxZoom: 21,
+    }).addTo(map);
+
+    // Soluciona el render roto si el componente fue montado oculto
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+  },
+};
 </script>
 
 <style scoped>
+/* fallback por si no aplica Tailwind */
 #heatmap {
-  width: 100%;
+  min-height: 600px;
+  min-width: 900px;
+  height: 800px;
+  width: 1200px;
 }
 </style>

@@ -109,30 +109,19 @@ export default {
   },
   methods: {
     loadData() {
-      // Obtener datos filtrados por rango de horas
       const filteredData = dataService.filterByTime(
         this.startHour,
         this.endHour
       );
+      console.log('Datos filtrados:', filteredData); // <-- Agrega esto
 
-      // Agrupar por hora
-      const hourlyGroups = {};
-      filteredData.forEach((record) => {
-        if (!hourlyGroups[record.hour]) {
-          hourlyGroups[record.hour] = 0;
-        }
-        hourlyGroups[record.hour] += record.visitors.total;
-      });
-
-      // Convertir a array ordenado
-      this.hourlyData = Object.keys(hourlyGroups)
-        .map((hour) => ({
-          hour: parseInt(hour),
-          visitors: hourlyGroups[hour],
+      this.hourlyData = filteredData
+        .map((item) => ({
+          hour: item.hour,
+          visitors: item.visitors.total,
         }))
         .sort((a, b) => a.hour - b.hour);
 
-      // Calcular estadísticas
       this.calculateStats();
     },
 
@@ -268,6 +257,7 @@ export default {
 
 <style scoped>
 canvas {
-  max-height: 300px;
+  max-width: 100%;
+  height: 400px;
 }
 </style>

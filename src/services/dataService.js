@@ -1,41 +1,26 @@
-// src/services/dataService.js
-import {
-  visitorData,
-  getDataByZone,
-  getDataByHour,
-  getOverallStats,
-  getDataByTimeRange,
-  getHeatmapData,
-} from '@/data/mockData.js';
+import personas from '@/data/registro_personas_biblioteca.json';
+
+function filterByTime(startHour, endHour) {
+  const hourly = {};
+  console.log('Datos cargados:', personas);
+
+  personas.forEach((p) => {
+    if (!p.timestamp) return;
+    const date = new Date(p.timestamp);
+    const hour = date.getUTCHours();
+    console.log('Registro:', { hour, startHour, endHour, timestamp: p.timestamp });
+    if (hour < startHour || hour > endHour) return;
+
+    if (!hourly[hour]) hourly[hour] = new Set();
+    hourly[hour].add(p.id);
+  });
+
+  return Object.keys(hourly).map((hour) => ({
+    hour: parseInt(hour),
+    visitors: { total: hourly[hour].size },
+  }));
+}
 
 export default {
-  // Obtener todos los datos
-  getAllData() {
-    return visitorData;
-  },
-
-  // Datos agregados por zona
-  getZoneData() {
-    return getDataByZone();
-  },
-
-  // Datos por hora
-  getHourlyData() {
-    return getDataByHour();
-  },
-
-  // Estadísticas generales
-  getStats() {
-    return getOverallStats();
-  },
-
-  // Filtrar por rango de tiempo
-  filterByTime(startHour, endHour) {
-    return getDataByTimeRange(startHour, endHour);
-  },
-
-  // Datos para mapa de calor
-  getHeatmap() {
-    return getHeatmapData();
-  },
+  filterByTime,
 };

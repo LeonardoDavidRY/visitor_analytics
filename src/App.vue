@@ -8,10 +8,21 @@
         <router-link to="/timeline" class="hover:text-green-600"
           >Timeline</router-link
         >
+        <router-link to="/agebar" class="hover:text-green-600"
+          >Personas por Edad</router-link
+        >
+        
+        <router-link to="/typepie" class="hover:text-green-600"
+          >Tipo de persona</router-link
+        >
+        
         <router-link to="/heatmap" class="hover:text-green-600"
           >Heatmap</router-link
         >
-         <router-link to="/cameramonitor" class="hover:text-green-600"
+        <router-link to="/personroutes" class="hover:text-green-600"
+          >Rutas de los visitantes</router-link
+        >
+        <router-link to="/cameramonitor" class="hover:text-green-600"
           >Cámara Monitor</router-link
         >
       </div>

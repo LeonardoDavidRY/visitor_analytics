@@ -1,7 +1,15 @@
-<!-- src/components/TimelineChart.vue -->
 <template>
   <div>
     <h2 class="text-xl font-semibold mb-4">Visitantes por hora</h2>
+    <div class="mb-4">
+      <label class="mr-2 font-medium">Filtrar por cámara:</label>
+      <select v-model="selectedCamera" class="border rounded px-2 py-1">
+        <option value="">Todas</option>
+        <option v-for="cam in cameras" :key="cam" :value="cam">
+          Cámara {{ cam }}
+        </option>
+      </select>
+    </div>
     <canvas ref="timelineChart"></canvas>
   </div>
 </template>
@@ -9,59 +17,80 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { Chart, registerables } from 'chart.js';
-import { visitorData } from '@/data/mockData';
+import personas from '@/data/registro_personas_biblioteca.json'; // Cambia el import
 
 Chart.register(...registerables);
-// eslint-disable-next-line no-undef
-const props = defineProps({
-  selectedZones: {
-    type: Array,
-    default: () => [],
-  },
-  timeRange: {
-    type: Object,
-    required: true,
-  },
-});
 
 const timelineChart = ref(null);
 let chartInstance = null;
 
-// Función para procesar datos con filtros aplicados
-const getFilteredData = () => {
-  const filtered = visitorData.filter((record) => {
-    const inTimeRange =
-      record.hour >= props.timeRange.start &&
-      record.hour <= props.timeRange.end;
-    const inZone =
-      props.selectedZones.length === 0 ||
-      props.selectedZones.includes(record.location.zone);
-    return inTimeRange && inZone;
-  });
+// Obtener lista única de cámaras del JSON
+const cameras = Array.from(
+  new Set(personas.filter((p) => p.id_camara).map((p) => p.id_camara))
+).sort((a, b) => a - b);
 
-  // Agregar por hora
+const selectedCamera = ref('');
+
+// Procesar datos agrupados por hora y cámara, contando personas únicas
+const getDataByHour = () => {
+  // Inicializar el mapa de horas de 6 a 12 con Sets para ids únicos
   const hourMap = {};
-  for (let hour = props.timeRange.start; hour <= props.timeRange.end; hour++) {
-    hourMap[hour] = 0;
+  for (let hour = 6; hour <= 12; hour++) {
+    hourMap[hour] = new Set();
   }
 
-  filtered.forEach((record) => {
-    hourMap[record.hour] += record.visitors.total;
+  // Filtrar por cámara si corresponde
+  const filtered = personas.filter((p) => {
+    if (!p.timestamp || !p.id_camara) return false;
+    if (selectedCamera.value && p.id_camara !== Number(selectedCamera.value))
+      return false;
+    return true;
   });
 
-  return Object.entries(hourMap).map(([hour, total]) => ({
+  // Agrupar por hora, agregando solo ids únicos
+  filtered.forEach((p) => {
+    const hour = new Date(p.timestamp).getUTCHours();
+    if (hour >= 6 && hour <= 22) {
+      hourMap[hour].add(p.id);
+    }
+  });
+
+  // Convertir a array para el gráfico
+  return Object.entries(hourMap).map(([hour, idSet]) => ({
     hour,
-    totalVisitors: total,
+    totalVisitors: idSet.size, // Cantidad de ids únicos
   }));
+};
+
+// Define un color para cada cámara y uno para "todas"
+const cameraColors = {
+  '': {
+    border: 'rgba(59, 130, 246, 1)',
+    background: 'rgba(59, 130, 246, 0.15)',
+  },
+  1: {
+    border: 'rgba(239, 68, 68, 1)',
+    background: 'rgba(239, 68, 68, 0.15)',
+  },
+  2: {
+    border: 'rgba(16, 185, 129, 1)',
+    background: 'rgba(16, 185, 129, 0.15)',
+  },
+  3: {
+    border: 'rgba(245, 158, 11, 1)',
+    background: 'rgba(245, 158, 11, 0.15)',
+  },
 };
 
 const renderChart = () => {
   const ctx = timelineChart.value.getContext('2d');
-  const dataByHour = getFilteredData();
+  const dataByHour = getDataByHour();
 
   if (chartInstance) {
     chartInstance.destroy();
   }
+
+  const color = cameraColors[selectedCamera.value] || cameraColors[''];
 
   chartInstance = new Chart(ctx, {
     type: 'line',
@@ -69,10 +98,10 @@ const renderChart = () => {
       labels: dataByHour.map((d) => `${d.hour}:00`),
       datasets: [
         {
-          label: 'Total de visitantes',
+          label: 'Total de visitantes únicos',
           data: dataByHour.map((d) => d.totalVisitors),
-          borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: color.border,
+          backgroundColor: color.background,
           fill: true,
           tension: 0.4,
         },
@@ -91,7 +120,7 @@ const renderChart = () => {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Cantidad de visitantes',
+            text: 'Cantidad de visitantes únicos',
           },
         },
       },
@@ -103,9 +132,7 @@ onMounted(() => {
   renderChart();
 });
 
-watch(() => [props.selectedZones, props.timeRange], renderChart, {
-  deep: true,
-});
+watch(selectedCamera, renderChart);
 </script>
 
 <style scoped>
