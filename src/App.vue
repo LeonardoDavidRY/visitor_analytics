@@ -1,67 +1,116 @@
 <template>
-  <div id="app">
-    <nav class="bg-white shadow-md p-4">
-      <div class="flex justify-center space-x-6 text-lg">
-        <router-link to="/dashboard" class="hover:text-green-600"
-          >Dashboard</router-link
-        >
-        <router-link to="/timeline" class="hover:text-green-600"
-          >Timeline</router-link
-        >
-        <router-link to="/agebar" class="hover:text-green-600"
-          >Personas por Edad</router-link
-        >
-        
-        <router-link to="/typepie" class="hover:text-green-600"
-          >Tipo de persona</router-link
-        >
-        
-        <router-link to="/heatmap" class="hover:text-green-600"
-          >Heatmap</router-link
-        >
-        <router-link to="/personroutes" class="hover:text-green-600"
-          >Rutas de los visitantes</router-link
-        >
-        <router-link to="/cameramonitor" class="hover:text-green-600"
-          >Cámara Monitor</router-link
+  <div
+    id="app"
+    class="h-screen min-h-screen bg-gradient-to-br from-gray-100 via-white to-green-100 flex"
+  >
+    <!-- Sidebar -->
+    <aside
+      class="w-64 h-screen bg-white/90 shadow-lg flex flex-col items-center py-8 px-4 sticky top-0 left-0 z-50"
+    >
+      <div class="flex flex-col items-center mb-6">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
+          alt="Logo"
+          class="w-14 h-14 rounded-full shadow mb-2"
+        />
+        <span
+          class="text-2xl font-extrabold text-green-600 tracking-tight text-center"
+          >Visitor Analytics</span
         >
       </div>
-    </nav>
-
-    <main class="p-6">
-      <router-view />
-    </main>
+      <nav class="flex flex-col w-full space-y-2">
+        <router-link
+          v-for="link in links"
+          :key="link.to"
+          :to="link.to"
+          class="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-green-100 hover:text-green-700 transition group"
+          active-class="bg-green-100 text-green-700"
+          exact-active-class="bg-green-100 text-green-700"
+        >
+          {{ link.label }}
+        </router-link>
+      </nav>
+    </aside>
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col h-screen">
+      <main
+        class="flex-1 max-w-6xl mx-auto p-6 rounded-2xl bg-white/80 shadow-lg w-full overflow-auto"
+      >
+        <router-view />
+      </main>
+      <footer class="text-center text-gray-500 py-3 text-sm bg-transparent">
+        © {{ new Date().getFullYear() }} Visitor Analytics · Hecho con
+        <span class="text-green-500">♥</span> en Vue
+      </footer>
+    </div>
   </div>
 </template>
 
+<script setup>
+const links = [
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/timeline', label: 'Timeline' },
+  { to: '/agebar', label: 'Personas por Edad' },
+  { to: '/typepie', label: 'Tipo de persona' },
+  { to: '/heatmap', label: 'Heatmap' },
+  { to: '/personroutes', label: 'Rutas de los visitantes' },
+  { to: '/cameramonitor', label: 'Cámara Monitor' },
+];
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #7dda99 0%, #e0f2fe 100%);
+  color: #222;
 }
 
-nav {
-  background: #ffffff;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Scrollbar moderno */
+::-webkit-scrollbar {
+  width: 10px;
+  background: #55b1ef;
+}
+::-webkit-scrollbar-thumb {
+  background: #86efac;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4ade80;
 }
 
-nav a {
-  margin: 0 15px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #2c3e50;
-  transition: color 0.2s ease;
+/* Selección de texto */
+::selection {
+  background: #bbf7d0;
+  color: #065f46;
 }
 
-nav a:hover {
-  color: #42b983;
+/* Inputs y selects más suaves */
+input,
+select,
+textarea {
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 2px #4ade80;
+  border-color: #4ade80;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+/* Botones más atractivos (si usas botones nativos) */
+button {
+  transition: background 0.2s, color 0.2s;
+}
+button:hover {
+  background: #4ade80;
+  color: white;
+}
+
+/* Animación sutil para los links */
+a,
+.router-link-active,
+.router-link-exact-active {
+  transition: color 0.2s, border-bottom 0.2s;
 }
 </style>
