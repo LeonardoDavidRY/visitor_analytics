@@ -8,6 +8,7 @@ import AgeBarView from '@/views/AgeBarView.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
 import LibraryMap from '@/components/charts/LibraryMap.vue';
 import PersonRoutesView from '@/views/PersonRoutesView.vue';
+import AdminView from '@/views/AdminView.vue';
 
 
 const routes = [
@@ -55,6 +56,11 @@ const routes = [
     path: '/cameramonitor',
     name: 'cameramonitor',
     component: CameraMonitorView,
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: AdminView,
   },
   {
     path: '/about',

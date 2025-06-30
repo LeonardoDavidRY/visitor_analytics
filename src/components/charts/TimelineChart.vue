@@ -1,107 +1,61 @@
 <template>
   <div>
     <h2 class="text-xl font-semibold mb-4">Visitantes por hora</h2>
-    <div class="mb-4">
-      <label class="mr-2 font-medium">Filtrar por cámara:</label>
-      <select v-model="selectedCamera" class="border rounded px-2 py-1">
-        <option value="">Todas</option>
-        <option v-for="cam in cameras" :key="cam" :value="cam">
-          Cámara {{ cam }}
-        </option>
-      </select>
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <div class="text-gray-500">Cargando datos...</div>
     </div>
-    <canvas ref="timelineChart"></canvas>
+    <div v-else-if="error" class="flex justify-center items-center h-64">
+      <div class="text-red-500">Error al cargar datos: {{ error }}</div>
+    </div>
+    <canvas v-else ref="timelineChart"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Chart, registerables } from 'chart.js';
-import personas from '@/data/registro_personas_biblioteca.json'; // Cambia el import
+import hybridDataService from '@/services/hybridDataService.js';
 
 Chart.register(...registerables);
 
 const timelineChart = ref(null);
 let chartInstance = null;
+const loading = ref(true);
+const error = ref(null);
+const hourlyData = ref([]);
 
-// Obtener lista única de cámaras del JSON
-const cameras = Array.from(
-  new Set(personas.filter((p) => p.id_camara).map((p) => p.id_camara))
-).sort((a, b) => a - b);
-
-const selectedCamera = ref('');
-
-// Procesar datos agrupados por hora y cámara, contando personas únicas
-const getDataByHour = () => {
-  // Inicializar el mapa de horas de 6 a 12 con Sets para ids únicos
-  const hourMap = {};
-  for (let hour = 6; hour <= 12; hour++) {
-    hourMap[hour] = new Set();
+const loadData = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    hourlyData.value = await hybridDataService.getHourlyData();
+  } catch (err) {
+    error.value = err.message || 'Error al cargar los datos';
+    console.error('Error loading hourly data:', err);
+  } finally {
+    loading.value = false;
   }
-
-  // Filtrar por cámara si corresponde
-  const filtered = personas.filter((p) => {
-    if (!p.timestamp || !p.id_camara) return false;
-    if (selectedCamera.value && p.id_camara !== Number(selectedCamera.value))
-      return false;
-    return true;
-  });
-
-  // Agrupar por hora, agregando solo ids únicos
-  filtered.forEach((p) => {
-    const hour = new Date(p.timestamp).getUTCHours();
-    if (hour >= 6 && hour <= 22) {
-      hourMap[hour].add(p.id);
-    }
-  });
-
-  // Convertir a array para el gráfico
-  return Object.entries(hourMap).map(([hour, idSet]) => ({
-    hour,
-    totalVisitors: idSet.size, // Cantidad de ids únicos
-  }));
-};
-
-// Define un color para cada cámara y uno para "todas"
-const cameraColors = {
-  '': {
-    border: 'rgba(59, 130, 246, 1)',
-    background: 'rgba(59, 130, 246, 0.15)',
-  },
-  1: {
-    border: 'rgba(239, 68, 68, 1)',
-    background: 'rgba(239, 68, 68, 0.15)',
-  },
-  2: {
-    border: 'rgba(16, 185, 129, 1)',
-    background: 'rgba(16, 185, 129, 0.15)',
-  },
-  3: {
-    border: 'rgba(245, 158, 11, 1)',
-    background: 'rgba(245, 158, 11, 0.15)',
-  },
 };
 
 const renderChart = () => {
+  if (!timelineChart.value || hourlyData.value.length === 0) return;
+  
   const ctx = timelineChart.value.getContext('2d');
-  const dataByHour = getDataByHour();
 
   if (chartInstance) {
     chartInstance.destroy();
   }
 
-  const color = cameraColors[selectedCamera.value] || cameraColors[''];
-
   chartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: dataByHour.map((d) => `${d.hour}:00`),
+      labels: hourlyData.value.map((d) => `${d.hour}:00`),
       datasets: [
         {
-          label: 'Total de visitantes únicos',
-          data: dataByHour.map((d) => d.totalVisitors),
-          borderColor: color.border,
-          backgroundColor: color.background,
+          label: 'Total de visitantes',
+          data: hourlyData.value.map((d) => d.totalVisitors),
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)',
           fill: true,
           tension: 0.4,
         },
@@ -120,7 +74,7 @@ const renderChart = () => {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Cantidad de visitantes únicos',
+            text: 'Cantidad de visitantes',
           },
         },
       },
@@ -128,11 +82,10 @@ const renderChart = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await loadData();
   renderChart();
 });
-
-watch(selectedCamera, renderChart);
 </script>
 
 <style scoped>

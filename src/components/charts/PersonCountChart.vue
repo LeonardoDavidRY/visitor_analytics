@@ -56,7 +56,7 @@
 
 <script>
 import { Chart, registerables } from 'chart.js';
-import dataService from '@/services/dataService.js';
+import hybridDataService from '@/services/hybridDataService.js';
 
 // Registrar todos los componentes de Chart.js
 Chart.register(...registerables);
@@ -108,36 +108,35 @@ export default {
     }
   },
   methods: {
-    loadData() {
-      const filteredData = dataService.filterByTime(
-        this.startHour,
-        this.endHour
-      );
-      console.log('Datos filtrados:', filteredData); // <-- Agrega esto
-
-      this.hourlyData = filteredData
-        .map((item) => ({
-          hour: item.hour,
-          visitors: item.visitors.total,
-        }))
-        .sort((a, b) => a.hour - b.hour);
-
-      this.calculateStats();
+    async loadData() {
+      try {
+        this.hourlyData = await hybridDataService.getHourlyData();
+        this.calculateStats();
+      } catch (error) {
+        console.error('Error loading data:', error);
+        // Fallback a datos vacíos
+        this.hourlyData = [];
+        this.stats = {
+          total: 0,
+          peak: { hour: 0, visitors: 0 },
+          average: 0,
+        };
+      }
     },
 
     calculateStats() {
       const totalVisitors = this.hourlyData.reduce(
-        (sum, item) => sum + item.visitors,
+        (sum, item) => sum + item.totalVisitors,
         0
       );
       const peakHour = this.hourlyData.reduce(
-        (max, current) => (current.visitors > max.visitors ? current : max),
-        { hour: 0, visitors: 0 }
+        (max, current) => (current.totalVisitors > max.totalVisitors ? current : max),
+        { hour: 0, totalVisitors: 0 }
       );
 
       this.stats = {
         total: totalVisitors,
-        peak: peakHour,
+        peak: { hour: peakHour.hour, visitors: peakHour.totalVisitors },
         average: Math.round(totalVisitors / this.hourlyData.length) || 0,
       };
     },
@@ -161,7 +160,7 @@ export default {
 
     getChartData() {
       const labels = this.hourlyData.map((item) => `${item.hour}:00`);
-      const data = this.hourlyData.map((item) => item.visitors);
+      const data = this.hourlyData.map((item) => item.totalVisitors);
 
       return {
         labels: labels,

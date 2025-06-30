@@ -55,6 +55,7 @@ const links = [
   { to: '/heatmap', label: 'Heatmap' },
   { to: '/personroutes', label: 'Rutas de los visitantes' },
   { to: '/cameramonitor', label: 'Cámara Monitor' },
+  { to: '/admin', label: '⚙️ Administración' },
 ];
 </script>
 
