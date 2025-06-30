@@ -6,6 +6,7 @@ import HeatmapView from '../views/HeatmapView.vue';
 import CameraMonitorView from '@/views/CameraMonitorView.vue';
 import AgeBarView from '@/views/AgeBarView.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
+import GenderPieView from '@/views/GenderPieView.vue';
 // Componentes antiguos (GPS/Leaflet) - mantenidos para compatibilidad
 import LibraryMap from '@/components/charts/LibraryMap.vue';
 import PersonRoutesView from '@/views/PersonRoutesView.vue';
@@ -40,6 +41,11 @@ const routes = [
     path: '/typepie',
     name: 'typepie',
     component: TypePieChart,
+  },
+  {
+    path: '/genderpie',
+    name: 'genderpie',
+    component: GenderPieView,
   },
   // Componentes antiguos (GPS/Leaflet) - deshabilitados del menú principal
   // {

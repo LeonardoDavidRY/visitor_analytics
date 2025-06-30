@@ -29,6 +29,7 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     hourlyData.value = await hybridDataService.getHourlyData();
+    console.log('Datos por hora cargados:', hourlyData.value);
   } catch (err) {
     error.value = err.message || 'Error al cargar los datos';
     console.error('Error loading hourly data:', err);
@@ -38,13 +39,22 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!timelineChart.value || hourlyData.value.length === 0) return;
+  if (!timelineChart.value || hourlyData.value.length === 0) {
+    console.log('No se puede renderizar timeline: canvas o datos no disponibles', {
+      canvas: !!timelineChart.value,
+      dataLength: hourlyData.value.length,
+      data: hourlyData.value
+    });
+    return;
+  }
   
   const ctx = timelineChart.value.getContext('2d');
 
   if (chartInstance) {
     chartInstance.destroy();
   }
+
+  console.log('Renderizando timeline con datos:', hourlyData.value);
 
   chartInstance = new Chart(ctx, {
     type: 'line',
@@ -78,6 +88,15 @@ const renderChart = () => {
           },
         },
       },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: ${context.parsed.y} visitantes`;
+            }
+          }
+        }
+      }
     },
   });
 };

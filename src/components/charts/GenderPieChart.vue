@@ -1,17 +1,6 @@
 <template>
   <div>
-    <h2 class="text-xl font-semibold mb-4">Distribución por tipo de persona</h2>
-    <!-- Filtro de género deshabilitado porque la API no soporta esta funcionalidad -->
-    <!--
-    <div class="mb-4">
-      <label class="mr-2 font-medium">Filtrar por género:</label>
-      <select v-model="selectedGender" class="border rounded px-2 py-1" @change="loadData">
-        <option value="">Todos</option>
-        <option value="masculino">Masculino</option>
-        <option value="femenino">Femenino</option>
-      </select>
-    </div>
-    -->
+    <h2 class="text-xl font-semibold mb-4">Distribución por género</h2>
     <div v-if="loading" class="flex justify-center items-center h-64">
       <div class="text-gray-500">Cargando datos...</div>
     </div>
@@ -19,65 +8,69 @@
       <div class="text-red-500">Error al cargar datos: {{ error }}</div>
     </div>
     <div v-else class="chart-container">
-      <canvas ref="pieChart"></canvas>
+      <canvas ref="genderChart"></canvas>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import hybridDataService from '@/services/hybridDataService.js';
 
 Chart.register(...registerables);
 
-const pieChart = ref(null);
+const genderChart = ref(null);
 let chartInstance = null;
-const selectedGender = ref('');
 const loading = ref(true);
 const error = ref(null);
-const typeData = ref([]);
+const genderData = ref([]);
 
 const loadData = async () => {
   try {
     loading.value = true;
     error.value = null;
-    typeData.value = await hybridDataService.getTypeData(selectedGender.value);
-    console.log('Datos de tipo cargados:', typeData.value);
+    genderData.value = await hybridDataService.getGenderData();
+    console.log('Datos de género cargados:', genderData.value);
   } catch (err) {
     error.value = err.message || 'Error al cargar los datos';
-    console.error('Error loading type data:', err);
+    console.error('Error loading gender data:', err);
   } finally {
     loading.value = false;
   }
 };
 
 const renderChart = () => {
-  if (!pieChart.value || typeData.value.length === 0) return;
+  if (!genderChart.value || genderData.value.length === 0) {
+    console.log('No se puede renderizar el gráfico de género: canvas o datos no disponibles');
+    return;
+  }
   
-  const ctx = pieChart.value.getContext('2d');
-  const labels = typeData.value.map(item => {
-    // Capitalizar la primera letra para mostrar correctamente
-    return item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1);
-  });
-  const data = typeData.value.map(item => item.count);
+  const ctx = genderChart.value.getContext('2d');
+  const labels = genderData.value.map(item => item.genero);
+  const data = genderData.value.map(item => item.count);
 
   if (chartInstance) {
     chartInstance.destroy();
   }
 
-  // Colores predefinidos para cada tipo
+  // Colores específicos para género
   const colorMap = {
-    'administrativo': '#FF6384',
-    'docente': '#36A2EB', 
-    'estudiante': '#FFCE56',
-    'externo': '#4BC0C0',
-    'visitante': '#9966FF'
+    'femenino': '#FF6B9D',    // Rosa
+    'masculino': '#4ECDC4',   // Azul verdoso
+    'otro': '#FFE66D',        // Amarillo
+    'no especificado': '#A8E6CF' // Verde claro
   };
   
-  const bgColors = typeData.value.map(item => 
-    colorMap[item.tipo.toLowerCase()] || `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+  const bgColors = genderData.value.map(item => 
+    colorMap[item.genero.toLowerCase()] || `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
   );
+
+  console.log('Renderizando gráfico de género con datos:', {
+    labels,
+    data,
+    colors: bgColors
+  });
 
   chartInstance = new Chart(ctx, {
     type: 'pie',
@@ -89,7 +82,8 @@ const renderChart = () => {
           data,
           backgroundColor: bgColors,
           borderColor: '#fff',
-          borderWidth: 2,
+          borderWidth: 3,
+          hoverBorderWidth: 4,
         },
       ],
     },
@@ -99,6 +93,12 @@ const renderChart = () => {
       plugins: {
         legend: {
           position: 'right',
+          labels: {
+            padding: 20,
+            font: {
+              size: 14
+            }
+          }
         },
         title: {
           display: false,
@@ -108,11 +108,16 @@ const renderChart = () => {
             label: function(context) {
               const total = data.reduce((a, b) => a + b, 0);
               const percentage = ((context.parsed / total) * 100).toFixed(1);
-              return `${context.label}: ${context.parsed} (${percentage}%)`;
+              return `${context.label}: ${context.parsed} personas (${percentage}%)`;
             }
           }
         }
       },
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1000
+      }
     },
   });
 };
@@ -122,20 +127,22 @@ onMounted(async () => {
   renderChart();
 });
 
-watch([typeData], () => {
-  renderChart();
+onBeforeUnmount(() => {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
 });
 </script>
 
 <style scoped>
 .chart-container {
-  max-width: 700px; /* Aumenta el ancho máximo */
+  max-width: 600px;
   margin: 0 auto;
 }
 canvas {
   width: 100% !important;
-  height: 600px !important; /* Aumenta la altura */
+  height: 500px !important;
   max-width: 100%;
-  max-height: 600px;
+  max-height: 500px;
 }
 </style>

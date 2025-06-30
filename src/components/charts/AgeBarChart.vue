@@ -29,6 +29,7 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     ageData.value = await hybridDataService.getAgeData();
+    console.log('Datos de edad cargados:', ageData.value);
   } catch (err) {
     error.value = err.message || 'Error al cargar los datos';
     console.error('Error loading age data:', err);
@@ -38,7 +39,14 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!ageBarChart.value || ageData.value.length === 0) return;
+  if (!ageBarChart.value || ageData.value.length === 0) {
+    console.log('No se puede renderizar: canvas o datos no disponibles', {
+      canvas: !!ageBarChart.value,
+      dataLength: ageData.value.length,
+      data: ageData.value
+    });
+    return;
+  }
   
   const ctx = ageBarChart.value.getContext('2d');
 
@@ -46,9 +54,18 @@ const renderChart = () => {
     chartInstance.destroy();
   }
 
-  // Generar un color random para cada barra
-  const randomColor = () => `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-  const barColors = ageData.value.map(() => randomColor());
+  // Colores predefinidos para cada rango de edad
+  const colorMap = {
+    '18 -25': '#FF6384',
+    '25 - 32': '#36A2EB', 
+    '32 o mas': '#FFCE56'
+  };
+  
+  const barColors = ageData.value.map(item => 
+    colorMap[item.edad] || `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+  );
+
+  console.log('Renderizando gráfico con datos:', ageData.value);
 
   chartInstance = new Chart(ctx, {
     type: 'bar',
@@ -69,6 +86,13 @@ const renderChart = () => {
       plugins: {
         legend: { display: true },
         title: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: ${context.parsed.x} personas`;
+            }
+          }
+        }
       },
       scales: {
         x: {

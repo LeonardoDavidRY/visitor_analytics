@@ -8,19 +8,24 @@ class HybridDataService {
 
   // Método para alternar entre API y datos locales
   setDataSource(useAPI) {
+    console.log('HybridDataService: Estableciendo fuente de datos a', useAPI ? 'API' : 'Local');
     this.useAPI = useAPI;
   }
 
   // Método unificado para obtener datos de edad
   async getAgeData() {
+    console.log('HybridDataService: Obteniendo datos de edad, useAPI =', this.useAPI);
     if (this.useAPI) {
       try {
-        return await apiDataService.getAgeData();
+        const data = await apiDataService.getAgeData();
+        console.log('HybridDataService: Datos de edad de API obtenidos:', data);
+        return data;
       } catch (error) {
         console.warn('API no disponible, usando datos locales:', error);
         return this.getLocalAgeData();
       }
     } else {
+      console.log('HybridDataService: Usando datos locales de edad');
       return this.getLocalAgeData();
     }
   }
@@ -30,12 +35,28 @@ class HybridDataService {
     const ageMap = {};
     personas.forEach((p) => {
       if (typeof p.edad === 'number' && p.id) {
-        if (!ageMap[p.edad]) ageMap[p.edad] = new Set();
-        ageMap[p.edad].add(p.id);
+        // Crear rangos similares a los de la API
+        let ageRange;
+        if (p.edad >= 18 && p.edad <= 25) {
+          ageRange = '18 -25';
+        } else if (p.edad > 25 && p.edad <= 32) {
+          ageRange = '25 - 32';
+        } else if (p.edad > 32) {
+          ageRange = '32 o mas';
+        } else {
+          return; // Ignorar edades menores a 18
+        }
+        
+        if (!ageMap[ageRange]) ageMap[ageRange] = new Set();
+        ageMap[ageRange].add(p.id);
       }
     });
+    
     return Object.entries(ageMap)
-      .sort((a, b) => a[0] - b[0])
+      .sort((a, b) => {
+        const order = {'18 -25': 1, '25 - 32': 2, '32 o mas': 3};
+        return order[a[0]] - order[b[0]];
+      })
       .map(([edad, idSet]) => ({ edad, total: idSet.size }));
   }
 
@@ -61,49 +82,88 @@ class HybridDataService {
         typeof p.tipo === 'string' &&
         (genderFilter === '' || p.genero === genderFilter)
       ) {
-        const tipo = p.tipo.toLowerCase();
+        // Capitalizar la primera letra para que coincida con el formato de la API
+        const tipo = p.tipo.charAt(0).toUpperCase() + p.tipo.slice(1).toLowerCase();
         typeMap[tipo] = (typeMap[tipo] || 0) + 1;
       }
     });
-    return Object.entries(typeMap).map(([tipo, count]) => ({ tipo, count }));
+    return Object.entries(typeMap).map(([tipo, count]) => ({ 
+      tipo: tipo.toLowerCase(), // Convertir a minúsculas para consistencia 
+      count 
+    }));
   }
 
   // Método unificado para obtener datos por hora
   async getHourlyData() {
+    console.log('HybridDataService: Obteniendo datos por hora, useAPI =', this.useAPI);
     if (this.useAPI) {
       try {
-        return await apiDataService.getHourlyData();
+        const data = await apiDataService.getHourlyData();
+        console.log('HybridDataService: Datos por hora de API obtenidos:', data);
+        return data;
       } catch (error) {
-        console.warn('API no disponible, usando datos locales:', error);
+        console.error('HybridDataService: Error obteniendo datos por hora de API, usando datos locales:', error);
         return this.getLocalHourlyData();
       }
     } else {
-      return this.getLocalHourlyData();
+      const data = this.getLocalHourlyData();
+      console.log('HybridDataService: Datos por hora locales obtenidos:', data);
+      return data;
+    }
+  }
+
+  // Método unificado para obtener datos de género
+  async getGenderData() {
+    console.log('HybridDataService: Obteniendo datos de género, useAPI =', this.useAPI);
+    if (this.useAPI) {
+      try {
+        const data = await apiDataService.getGenderData();
+        console.log('HybridDataService: Datos de género de API obtenidos:', data);
+        return data;
+      } catch (error) {
+        console.error('HybridDataService: Error obteniendo datos de género de API, usando datos locales:', error);
+        return this.getLocalGenderData();
+      }
+    } else {
+      const data = this.getLocalGenderData();
+      console.log('HybridDataService: Datos de género locales obtenidos:', data);
+      return data;
     }
   }
 
   // Método local para datos por hora (fallback)
   getLocalHourlyData() {
-    const hourMap = {};
-    
-    // Inicializar horas de 6 a 22
-    for (let hour = 6; hour <= 22; hour++) {
-      hourMap[hour] = new Set();
-    }
-
+    const hourlyMap = {};
     personas.forEach((p) => {
-      if (!p.timestamp) return;
-      const date = new Date(p.timestamp);
-      const hour = date.getUTCHours();
-      if (hour >= 6 && hour <= 22) {
-        hourMap[hour].add(p.id);
+      const hour = new Date(p.timestamp).getHours();
+      if (!hourlyMap[hour]) {
+        hourlyMap[hour] = new Set();
       }
+      hourlyMap[hour].add(p.id);
     });
+    
+    return Object.entries(hourlyMap)
+      .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+      .map(([hora, idSet]) => ({ hora: parseInt(hora), total: idSet.size }));
+  }
 
-    return Object.entries(hourMap).map(([hour, idSet]) => ({
-      hour: parseInt(hour),
-      totalVisitors: idSet.size,
-    }));
+  // Método local para datos de género (fallback)
+  getLocalGenderData() {
+    const genderMap = {};
+    personas.forEach((p) => {
+      const genero = p.sexo || 'No especificado';
+      if (!genderMap[genero]) {
+        genderMap[genero] = new Set();
+      }
+      genderMap[genero].add(p.id);
+    });
+    
+    return Object.entries(genderMap)
+      .map(([genero, idSet]) => ({ 
+        genero: genero.charAt(0).toUpperCase() + genero.slice(1),
+        count: idSet.size 
+      }))
+      .sort((a, b) => b.count - a.count);
   }
 
   // Método para verificar el estado de la API

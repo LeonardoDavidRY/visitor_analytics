@@ -12,12 +12,15 @@ class ApiDataService {
     
     // Si tenemos datos en cache y no han expirado, los retornamos
     if (this.data && this.lastFetch && (now - this.lastFetch) < this.cacheTimeout) {
+      console.log('ApiDataService: Usando datos en cache');
       return this.data;
     }
 
     try {
+      console.log('ApiDataService: Obteniendo datos frescos de la API');
       this.data = await ApiFormularioClient.consultarDatosAPI();
       this.lastFetch = now;
+      console.log('ApiDataService: Datos obtenidos de la API:', this.data);
       return this.data;
     } catch (error) {
       console.error('Error al obtener datos de la API:', error);
@@ -37,22 +40,29 @@ class ApiDataService {
     const data = await this.getData();
     const ageData = data.conteo_edad || {};
     
-    return Object.entries(ageData).map(([range, count]) => ({
-      edad: range,
-      total: count
-    }));
+    return Object.entries(ageData)
+      .sort((a, b) => {
+        // Ordenar por el primer número de cada rango
+        const aNum = parseInt(a[0].split(/[-\s]/)[0]);
+        const bNum = parseInt(b[0].split(/[-\s]/)[0]);
+        return aNum - bNum;
+      })
+      .map(([range, count]) => ({
+        edad: range,
+        total: count
+      }));
   }
 
   // Transforma los datos de tipo de la API al formato esperado por TypePieChart
   async getTypeData(genderFilter = '') {
     const data = await this.getData();
     
-    // Si hay filtro de género, necesitamos usar tabla_cruzada_tipo_edad
-    // Por ahora retornamos conteo_tipo ya que no hay tabla cruzada por género
+    // Por ahora la API no soporta filtro por género en conteo_tipo
+    // Se ignora el filtro de género
     const typeData = data.conteo_tipo || {};
     
     return Object.entries(typeData).map(([type, count]) => ({
-      tipo: type.toLowerCase(),
+      tipo: type.toLowerCase(), // Convertir a minúsculas para consistencia
       count: count
     }));
   }
@@ -62,30 +72,35 @@ class ApiDataService {
     const data = await this.getData();
     const hourData = data.conteo_hora || {};
     
-    // Crear un mapa de horas de 6 a 22 con valores por defecto en 0
+    // Crear un mapa de horas con los datos de la API
     const hourlyMap = {};
-    for (let hour = 6; hour <= 22; hour++) {
-      hourlyMap[hour] = 0;
-    }
     
     // Llenar con los datos de la API
     Object.entries(hourData).forEach(([hour, count]) => {
       const hourInt = parseInt(hour);
-      if (hourInt >= 6 && hourInt <= 22) {
-        hourlyMap[hourInt] = count;
-      }
+      hourlyMap[hourInt] = count;
     });
     
-    return Object.entries(hourlyMap).map(([hour, count]) => ({
-      hour: parseInt(hour),
-      totalVisitors: count
-    }));
+    // Ordenar por hora y retornar
+    return Object.entries(hourlyMap)
+      .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+      .map(([hour, count]) => ({
+        hour: parseInt(hour),
+        totalVisitors: count
+      }));
   }
 
   // Obtiene los datos de género
   async getGenderData() {
     const data = await this.getData();
-    return data.conteo_sexo || {};
+    const genderData = data.conteo_sexo || {};
+    
+    console.log('ApiDataService: Datos de género de API:', genderData);
+    
+    return Object.entries(genderData).map(([gender, count]) => ({
+      genero: gender,
+      count: count
+    }));
   }
 
   // Obtiene la tabla cruzada tipo-edad

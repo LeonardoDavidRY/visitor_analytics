@@ -148,6 +148,7 @@
 import DataSourceControl from '@/components/DataSourceControl.vue';
 import AgeBarChart from '@/components/charts/AgeBarChart.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
+import GenderPieChart from '@/components/charts/GenderPieChart.vue';
 import TimelineChart from '@/components/charts/TimelineChart.vue';
 // Componentes legacy para comparación
 import PersonRoutes from '@/components/charts/PersonRoutes.vue';
@@ -163,6 +164,7 @@ export default {
     DataSourceControl,
     AgeBarChart,
     TypePieChart,
+    GenderPieChart,
     TimelineChart,
     // Componentes legacy
     PersonRoutes,

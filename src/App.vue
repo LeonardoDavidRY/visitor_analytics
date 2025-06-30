@@ -52,6 +52,7 @@ const links = [
   { to: '/timeline', label: 'Timeline' },
   { to: '/agebar', label: 'Personas por Edad' },
   { to: '/typepie', label: 'Tipo de persona' },
+  { to: '/genderpie', label: 'Distribución por Género' },
   { to: '/cartesian-heatmap', label: 'Mapa de Calor' },
   { to: '/cartesian-routes', label: 'Rutas de Visitantes' },
   { to: '/cameramonitor', label: 'Cámara Monitor' },

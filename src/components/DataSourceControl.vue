@@ -61,7 +61,9 @@ const checkAPIStatus = async () => {
   checking.value = true;
   try {
     apiStatus.value = await hybridDataService.checkAPIStatus();
+    console.log('Estado de la API:', apiStatus.value);
   } catch (error) {
+    console.error('Error verificando API:', error);
     apiStatus.value = false;
   } finally {
     checking.value = false;
@@ -69,6 +71,7 @@ const checkAPIStatus = async () => {
 };
 
 const handleToggle = () => {
+  console.log('Cambiando fuente de datos a:', useAPI.value ? 'API' : 'Local');
   hybridDataService.setDataSource(useAPI.value);
   // Emitir evento para que los componentes padre puedan recargar datos
   // En una implementación más robusta, podrías usar un store global
