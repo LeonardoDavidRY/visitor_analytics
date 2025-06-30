@@ -6,9 +6,13 @@ import HeatmapView from '../views/HeatmapView.vue';
 import CameraMonitorView from '@/views/CameraMonitorView.vue';
 import AgeBarView from '@/views/AgeBarView.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
+// Componentes antiguos (GPS/Leaflet) - mantenidos para compatibilidad
 import LibraryMap from '@/components/charts/LibraryMap.vue';
 import PersonRoutesView from '@/views/PersonRoutesView.vue';
 import AdminView from '@/views/AdminView.vue';
+// Nuevos componentes cartesianos
+import CartesianRoutesView from '@/views/CartesianRoutesView.vue';
+import CartesianHeatmapView from '@/views/CartesianHeatmapView.vue';
 
 
 const routes = [
@@ -37,20 +41,32 @@ const routes = [
     name: 'typepie',
     component: TypePieChart,
   },
-  {
-    path: '/librarymap',
-    name: 'librarymap',
-    component: LibraryMap,
-  },
+  // Componentes antiguos (GPS/Leaflet) - deshabilitados del menú principal
+  // {
+  //   path: '/librarymap',
+  //   name: 'librarymap',
+  //   component: LibraryMap,
+  // },
   {
     path: '/heatmap',
     name: 'heatmap',
     component: HeatmapView,
   },
+  // {
+  //   path: '/personroutes',
+  //   name: 'personroutes',
+  //   component: PersonRoutesView,
+  // },
+  // Nuevos componentes cartesianos
   {
-    path: '/personroutes',
-    name: 'personroutes',
-    component: PersonRoutesView,
+    path: '/cartesian-routes',
+    name: 'cartesian-routes',
+    component: CartesianRoutesView,
+  },
+  {
+    path: '/cartesian-heatmap',
+    name: 'cartesian-heatmap',
+    component: CartesianHeatmapView,
   },
   {
     path: '/cameramonitor',
@@ -61,6 +77,22 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView,
+  },
+  // Rutas legacy (accesibles directamente pero no en menú)
+  {
+    path: '/legacy/librarymap',
+    name: 'legacy-librarymap',
+    component: LibraryMap,
+  },
+  {
+    path: '/legacy/personroutes',
+    name: 'legacy-personroutes',
+    component: PersonRoutesView,
+  },
+  {
+    path: '/legacy/heatmap',
+    name: 'legacy-heatmap',
+    component: HeatmapView,
   },
   {
     path: '/about',

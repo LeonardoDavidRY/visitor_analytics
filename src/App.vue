@@ -52,8 +52,8 @@ const links = [
   { to: '/timeline', label: 'Timeline' },
   { to: '/agebar', label: 'Personas por Edad' },
   { to: '/typepie', label: 'Tipo de persona' },
-  { to: '/heatmap', label: 'Heatmap' },
-  { to: '/personroutes', label: 'Rutas de los visitantes' },
+  { to: '/cartesian-heatmap', label: 'Mapa de Calor' },
+  { to: '/cartesian-routes', label: 'Rutas de Visitantes' },
   { to: '/cameramonitor', label: 'Cámara Monitor' },
   { to: '/admin', label: '⚙️ Administración' },
 ];

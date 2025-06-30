@@ -60,9 +60,15 @@
 
             <h3 class="font-medium text-gray-700 mt-4 mb-2">Componentes que siguen usando datos locales:</h3>
             <ul class="text-sm space-y-1">
-              <li>• Mapas de Calor (HeatmapChart)</li>
-              <li>• Rutas de Personas (PersonRoutes)</li>
-              <li>• Mapa de la Biblioteca (LibraryMap)</li>
+              <li>• Mapas de Calor (HeatmapChart) - <em>Componente legacy</em></li>
+              <li>• Rutas de Personas (PersonRoutes) - <em>Componente legacy</em></li>
+              <li>• Mapa de la Biblioteca (LibraryMap) - <em>Componente legacy</em></li>
+            </ul>
+
+            <h3 class="font-medium text-gray-700 mt-4 mb-2">Nuevos componentes cartesianos:</h3>
+            <ul class="text-sm space-y-1">
+              <li>• Rutas Cartesianas (CartesianRoutes)</li>
+              <li>• Mapa de Calor Cartesiano (CartesianHeatmap)</li>
             </ul>
           </div>
         </div>
@@ -85,6 +91,55 @@
         <h3 class="text-lg font-semibold mb-4">Vista Previa - Timeline</h3>
         <TimelineChart />
       </div>
+
+      <!-- Sección de comparación: Componentes Legacy vs Cartesianos -->
+      <div class="mt-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+          Comparación: Componentes Legacy vs Cartesianos
+        </h2>
+        
+        <!-- Rutas: Legacy vs Cartesiano -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold mb-4 text-orange-600">
+              🗺️ Rutas Legacy (GPS/Leaflet)
+            </h3>
+            <PersonRoutes />
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold mb-4 text-green-600">
+              📊 Rutas Cartesianas (X,Y)
+            </h3>
+            <CartesianRoutes />
+          </div>
+        </div>
+
+        <!-- Heatmaps: Legacy vs Cartesiano -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold mb-4 text-orange-600">
+              🔥 Heatmap Legacy (GPS/Leaflet)
+            </h3>
+            <HeatmapChart />
+          </div>
+          
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold mb-4 text-green-600">
+              🌡️ Heatmap Cartesiano (X,Y)
+            </h3>
+            <CartesianHeatmap />
+          </div>
+        </div>
+
+        <!-- Mapa de biblioteca (solo legacy) -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-4 text-orange-600">
+            🏛️ Mapa de Biblioteca Legacy (GPS/Leaflet)
+          </h3>
+          <LibraryMap />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +149,13 @@ import DataSourceControl from '@/components/DataSourceControl.vue';
 import AgeBarChart from '@/components/charts/AgeBarChart.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
 import TimelineChart from '@/components/charts/TimelineChart.vue';
+// Componentes legacy para comparación
+import PersonRoutes from '@/components/charts/PersonRoutes.vue';
+import HeatmapChart from '@/components/charts/HeatmapChart.vue';
+import LibraryMap from '@/components/charts/LibraryMap.vue';
+// Nuevos componentes cartesianos
+import CartesianRoutes from '@/components/charts/CartesianRoutes.vue';
+import CartesianHeatmap from '@/components/charts/CartesianHeatmap.vue';
 
 export default {
   name: 'AdminView',
@@ -101,7 +163,14 @@ export default {
     DataSourceControl,
     AgeBarChart,
     TypePieChart,
-    TimelineChart
+    TimelineChart,
+    // Componentes legacy
+    PersonRoutes,
+    HeatmapChart,
+    LibraryMap,
+    // Componentes cartesianos
+    CartesianRoutes,
+    CartesianHeatmap
   },
   data() {
     return {
