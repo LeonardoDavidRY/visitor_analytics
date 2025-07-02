@@ -49,6 +49,7 @@
 <script setup>
 const links = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/api-dashboard', label: 'Dashboard API' },
   { to: '/timeline', label: 'Timeline' },
   { to: '/agebar', label: 'Personas por Edad' },
   { to: '/typepie', label: 'Tipo de persona' },

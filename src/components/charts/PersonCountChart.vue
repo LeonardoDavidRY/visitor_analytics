@@ -4,6 +4,13 @@
       <h3 class="text-lg font-semibold text-gray-800">Visitantes por Hora</h3>
       <div class="flex space-x-2">
         <button
+          @click="loadData" 
+          :disabled="loading"
+          class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 text-sm"
+        >
+          {{ loading ? 'Cargando...' : 'Actualizar' }}
+        </button>
+        <button
           @click="chartType = 'line'"
           :class="
             chartType === 'line'
@@ -28,7 +35,16 @@
       </div>
     </div>
 
-    <div class="relative">
+    <!-- Estado de error -->
+    <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Estado de carga o gráfico -->
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <div class="text-gray-500">Cargando datos...</div>
+    </div>
+    <div v-else class="relative">
       <canvas ref="chartCanvas" width="400" height="200"></canvas>
     </div>
 
@@ -56,7 +72,7 @@
 
 <script>
 import { Chart, registerables } from 'chart.js';
-import dataService from '@/services/dataService.js';
+import apiService from '@/services/apiService.js';
 
 // Registrar todos los componentes de Chart.js
 Chart.register(...registerables);
@@ -83,11 +99,17 @@ export default {
         peak: { hour: 0, visitors: 0 },
         average: 0,
       },
+      loading: false,
+      error: null,
+      updateInterval: null,
     };
   },
   mounted() {
     this.loadData();
     this.createChart();
+    
+    // Actualizar datos cada 30 segundos
+    this.updateInterval = setInterval(this.loadData, 30000);
   },
   watch: {
     chartType() {
@@ -106,23 +128,40 @@ export default {
     if (this.chart) {
       this.chart.destroy();
     }
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
   },
   methods: {
-    loadData() {
-      const filteredData = dataService.filterByTime(
-        this.startHour,
-        this.endHour
-      );
-      console.log('Datos filtrados:', filteredData); // <-- Agrega esto
+    async loadData() {
+      try {
+        this.loading = true;
+        this.error = null;
+        
+        const apiData = await apiService.fetchData();
+        const hourData = apiData.conte_hora || {};
+        
+        this.hourlyData = Object.entries(hourData)
+          .map(([hour, visitors]) => ({
+            hour: parseInt(hour),
+            visitors: visitors,
+          }))
+          .filter(item => {
+            return item.hour >= this.startHour && item.hour <= this.endHour;
+          })
+          .sort((a, b) => a.hour - b.hour);
 
-      this.hourlyData = filteredData
-        .map((item) => ({
-          hour: item.hour,
-          visitors: item.visitors.total,
-        }))
-        .sort((a, b) => a.hour - b.hour);
-
-      this.calculateStats();
+        this.calculateStats();
+        
+        if (this.chart) {
+          this.updateChart();
+        }
+      } catch (err) {
+        this.error = 'Error al cargar los datos';
+        console.error('Error loading data:', err);
+      } finally {
+        this.loading = false;
+      }
     },
 
     calculateStats() {
@@ -138,7 +177,7 @@ export default {
       this.stats = {
         total: totalVisitors,
         peak: peakHour,
-        average: Math.round(totalVisitors / this.hourlyData.length) || 0,
+        average: Math.round(totalVisitors / (this.hourlyData.length || 1)),
       };
     },
 

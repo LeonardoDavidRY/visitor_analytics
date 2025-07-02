@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold">Visitantes por hora</h2>
+      <h2 class="text-xl font-semibold">Distribución por Tipo y Edad</h2>
       <button 
         @click="loadData" 
         :disabled="loading"
@@ -22,7 +22,7 @@
     </div>
     
     <!-- Gráfico -->
-    <canvas v-else ref="timelineChart"></canvas>
+    <canvas v-else ref="crossTableChart"></canvas>
   </div>
 </template>
 
@@ -33,7 +33,7 @@ import apiService from '@/services/apiService.js';
 
 Chart.register(...registerables);
 
-const timelineChart = ref(null);
+const crossTableChart = ref(null);
 let chartInstance = null;
 let updateInterval = null;
 
@@ -41,18 +41,47 @@ const loading = ref(false);
 const error = ref(null);
 const apiData = ref(null);
 
-// Procesar datos agrupados por hora
-const getDataByHour = () => {
-  if (!apiData.value) return [];
+const getCrossTableData = () => {
+  if (!apiData.value) return { labels: [], datasets: [] };
   
-  const hourData = apiData.value.conte_hora || {};
+  const crossTable = apiData.value.tabla_cruzada_tipo_edad || {};
+  const ageRanges = Object.keys(crossTable);
   
-  return Object.entries(hourData)
-    .map(([hour, totalVisitors]) => ({
-      hour: parseInt(hour),
-      totalVisitors: totalVisitors,
-    }))
-    .sort((a, b) => a.hour - b.hour);
+  if (ageRanges.length === 0) return { labels: [], datasets: [] };
+  
+  // Obtener todos los tipos únicos
+  const allTypes = new Set();
+  Object.values(crossTable).forEach(ageData => {
+    Object.keys(ageData).forEach(type => allTypes.add(type));
+  });
+  
+  const types = Array.from(allTypes);
+  
+  // Colores predefinidos para cada tipo
+  const colors = [
+    '#3B82F6', // blue-500
+    '#EF4444', // red-500
+    '#10B981', // green-500
+    '#F59E0B', // yellow-500
+    '#8B5CF6', // purple-500
+    '#EC4899', // pink-500
+    '#14B8A6', // teal-500
+    '#F97316', // orange-500
+  ];
+  
+  // Crear datasets para cada tipo
+  const datasets = types.map((type, index) => ({
+    label: type,
+    data: ageRanges.map(ageRange => crossTable[ageRange][type] || 0),
+    backgroundColor: colors[index % colors.length],
+    borderColor: colors[index % colors.length],
+    borderWidth: 1,
+  }));
+  
+  return {
+    labels: ageRanges,
+    datasets: datasets
+  };
 };
 
 const loadData = async () => {
@@ -70,61 +99,38 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!timelineChart.value) return;
+  if (!crossTableChart.value) return;
   
-  const ctx = timelineChart.value.getContext('2d');
-  const dataByHour = getDataByHour();
+  const ctx = crossTableChart.value.getContext('2d');
+  const chartData = getCrossTableData();
 
   if (chartInstance) {
     chartInstance.destroy();
   }
 
   // No renderizar si no hay datos
-  if (dataByHour.length === 0) {
+  if (chartData.labels.length === 0) {
     return;
   }
 
-  const color = {
-    border: 'rgba(59, 130, 246, 1)',
-    background: 'rgba(59, 130, 246, 0.15)',
-  };
-
   chartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: dataByHour.map((d) => `${d.hour}:00`),
-      datasets: [
-        {
-          label: 'Total de visitantes',
-          data: dataByHour.map((d) => d.totalVisitors),
-          borderColor: color.border,
-          backgroundColor: color.background,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: color.border,
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-        },
-      ],
-    },
+    type: 'bar',
+    data: chartData,
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           display: true,
+          position: 'top',
+        },
+        title: {
+          display: false,
         },
         tooltip: {
-          backgroundColor: 'rgba(17, 24, 39, 0.8)',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          borderColor: color.border,
-          borderWidth: 1,
           callbacks: {
             label: function(context) {
-              return `Visitantes: ${context.parsed.y}`;
+              return `${context.dataset.label}: ${context.parsed.y}`;
             }
           }
         }
@@ -133,7 +139,7 @@ const renderChart = () => {
         x: {
           title: {
             display: true,
-            text: 'Hora del día',
+            text: 'Rango de edad',
             color: '#6B7280',
           },
           grid: {
@@ -147,7 +153,7 @@ const renderChart = () => {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Cantidad de visitantes',
+            text: 'Cantidad de personas',
             color: '#6B7280',
           },
           grid: {

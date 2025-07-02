@@ -6,6 +6,7 @@ import HeatmapView from '../views/HeatmapView.vue';
 import CameraMonitorView from '@/views/CameraMonitorView.vue';
 import AgeBarView from '@/views/AgeBarView.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
+import ApiDashboard from '@/views/ApiDashboard.vue';
 // Componentes antiguos (GPS/Leaflet) - mantenidos para compatibilidad
 import LibraryMap from '@/components/charts/LibraryMap.vue';
 import PersonRoutesView from '@/views/PersonRoutesView.vue';
@@ -71,6 +72,11 @@ const routes = [
     path: '/cameramonitor',
     name: 'cameramonitor',
     component: CameraMonitorView,
+  },
+  {
+    path: '/api-dashboard',
+    name: 'api-dashboard',
+    component: ApiDashboard,
   },
  
   // Rutas legacy (accesibles directamente pero no en menú)
