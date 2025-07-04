@@ -25,20 +25,25 @@
       {{ error }}
     </div>
     
-    <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="text-gray-500">Cargando datos...</div>
-    </div>
-    
-    <!-- Gráfico -->
-    <div v-else class="chart-container">
+    <!-- Gráfico siempre presente -->
+    <div class="chart-container">
       <canvas ref="pieChart"></canvas>
+      
+      <!-- Overlay de carga -->
+      <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+        <div class="text-gray-500">Cargando datos...</div>
+      </div>
+      
+      <!-- Overlay de datos de muestra -->
+      <div v-if="!loading && !apiData" class="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-75">
+        <span class="text-gray-500">Usando datos de muestra</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -59,8 +64,8 @@ let updateInterval = null;
 const getDataByType = () => {
   if (!apiData.value) return {};
   
-  const typeData = apiData.value.conte_tipo || {};
-  const genderData = apiData.value.conte_sexo || {};
+  const typeData = apiData.value.conteo_tipo || {};
+  const genderData = apiData.value.conteo_sexo || {};
   
   // Si no hay filtro de género, devolver los datos de tipo directamente
   if (selectedGender.value === '') {
@@ -77,6 +82,9 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
+    
+    // Wait for next tick to ensure DOM is ready
+    await nextTick();
     renderChart();
   } catch (err) {
     error.value = 'Error al cargar los datos';
@@ -86,9 +94,22 @@ const loadData = async () => {
   }
 };
 
-const renderChart = () => {
-  if (!pieChart.value) return;
+const renderChart = async (retryCount = 0) => {
+  // Wait for DOM to be ready
+  await nextTick();
   
+  if (!pieChart.value) {
+    if (retryCount < 10) { // Maximum 10 retries (1 second total)
+      console.log(`TypePieChart: Canvas not available, retry ${retryCount + 1}/10`);
+      setTimeout(() => renderChart(retryCount + 1), 100);
+      return;
+    } else {
+      console.error('TypePieChart: Canvas never became available after 10 retries');
+      return;
+    }
+  }
+  
+  console.log('TypePieChart: Canvas found, creating chart');
   const ctx = pieChart.value.getContext('2d');
   const typeData = getDataByType();
   const labels = Object.keys(typeData);
@@ -98,11 +119,9 @@ const renderChart = () => {
     chartInstance.destroy();
   }
 
-  // No renderizar si no hay datos
-  if (labels.length === 0) {
-    return;
-  }
-
+  // Renderizar siempre, incluso con datos vacíos
+  const hasData = labels.length > 0 && data.some(value => value > 0);
+  
   // Colores predefinidos para consistencia
   const colors = [
     '#3B82F6', // blue-500
@@ -115,17 +134,17 @@ const renderChart = () => {
     '#F97316', // orange-500
   ];
   
-  const bgColors = labels.map((_, index) => colors[index % colors.length]);
-  const borderColors = labels.map(() => '#374151'); // gray-700
+  const bgColors = hasData ? labels.map((_, index) => colors[index % colors.length]) : ['#E5E7EB'];
+  const borderColors = hasData ? labels.map(() => '#374151') : ['#9CA3AF'];
 
   chartInstance = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels,
+      labels: hasData ? labels : ['Sin datos'],
       datasets: [
         {
           label: 'Cantidad',
-          data,
+          data: hasData ? data : [1],
           backgroundColor: bgColors,
           borderColor: borderColors,
           borderWidth: 2,
@@ -157,9 +176,16 @@ const renderChart = () => {
 };
 
 onMounted(async () => {
+  console.log('TypePieChart: Component mounted');
+  
+  // Initial chart render with empty data
+  await nextTick();
+  renderChart();
+  
+  // Load data
   await loadData();
   
-  // Actualizar datos cada 30 segundos
+  // Update every 30 seconds
   updateInterval = setInterval(loadData, 30000);
 });
 
@@ -179,7 +205,9 @@ watch(selectedGender, renderChart);
 .chart-container {
   max-width: 700px; /* Aumenta el ancho máximo */
   margin: 0 auto;
+  position: relative; /* Para posicionar los overlays */
 }
+
 canvas {
   width: 100% !important;
   height: 600px !important; /* Aumenta la altura */

@@ -16,18 +16,25 @@
       {{ error }}
     </div>
     
-    <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="text-gray-500">Cargando datos...</div>
+    <!-- Gráfico siempre presente -->
+    <div class="relative">
+      <canvas ref="ageBarChart" class="max-w-full max-h-96"></canvas>
+      
+      <!-- Overlay de carga -->
+      <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+        <div class="text-gray-500">Cargando datos...</div>
+      </div>
+      
+      <!-- Overlay de datos de muestra -->
+      <div v-if="!loading && !apiData" class="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-75">
+        <span class="text-gray-500">Usando datos de muestra</span>
+      </div>
     </div>
-    
-    <!-- Gráfico -->
-    <canvas v-else ref="ageBarChart"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -44,7 +51,7 @@ const apiData = ref(null);
 const getDataByAge = () => {
   if (!apiData.value) return [];
   
-  const ageData = apiData.value.conte_edad || {};
+  const ageData = apiData.value.conteo_edad || {};
   
   return Object.entries(ageData)
     .map(([ageRange, total]) => ({ 
@@ -66,6 +73,9 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
+    
+    // Wait for next tick to ensure DOM is ready
+    await nextTick();
     renderChart();
   } catch (err) {
     error.value = 'Error al cargar los datos';
@@ -75,9 +85,22 @@ const loadData = async () => {
   }
 };
 
-const renderChart = () => {
-  if (!ageBarChart.value) return;
+const renderChart = async (retryCount = 0) => {
+  // Wait for DOM to be ready
+  await nextTick();
   
+  if (!ageBarChart.value) {
+    if (retryCount < 10) { // Maximum 10 retries (1 second total)
+      console.log(`AgeBarChart: Canvas not available, retry ${retryCount + 1}/10`);
+      setTimeout(() => renderChart(retryCount + 1), 100);
+      return;
+    } else {
+      console.error('AgeBarChart: Canvas never became available after 10 retries');
+      return;
+    }
+  }
+  
+  console.log('AgeBarChart: Canvas found, creating chart');
   const ctx = ageBarChart.value.getContext('2d');
   const dataByAge = getDataByAge();
 
@@ -85,11 +108,9 @@ const renderChart = () => {
     chartInstance.destroy();
   }
 
-  // No renderizar si no hay datos
-  if (dataByAge.length === 0) {
-    return;
-  }
-
+  // Renderizar siempre, incluso con datos vacíos
+  const hasData = dataByAge.length > 0;
+  
   // Colores predefinidos para consistencia
   const colors = [
     '#3B82F6', // blue-500
@@ -105,13 +126,13 @@ const renderChart = () => {
   chartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: dataByAge.map((d) => d.edad),
+      labels: hasData ? dataByAge.map((d) => d.edad) : ['Sin datos'],
       datasets: [
         {
           label: 'Cantidad de personas',
-          data: dataByAge.map((d) => d.total),
-          backgroundColor: barColors,
-          borderColor: barColors.map(color => color),
+          data: hasData ? dataByAge.map((d) => d.total) : [0],
+          backgroundColor: barColors.length > 0 ? barColors : ['#E5E7EB'],
+          borderColor: barColors.length > 0 ? barColors : ['#E5E7EB'],
           borderWidth: 1,
         },
       ],
@@ -145,9 +166,16 @@ const renderChart = () => {
 };
 
 onMounted(async () => {
+  console.log('AgeBarChart: Component mounted');
+  
+  // Initial chart render with empty data
+  await nextTick();
+  renderChart();
+  
+  // Load data
   await loadData();
   
-  // Actualizar datos cada 30 segundos
+  // Update every 30 seconds
   updateInterval = setInterval(loadData, 30000);
 });
 

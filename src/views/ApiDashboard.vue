@@ -145,23 +145,23 @@ let updateInterval = null;
 
 // Computed properties para los totales
 const totalVisitorsGender = computed(() => {
-  if (!apiData.value?.conte_sexo) return 0;
-  return Object.values(apiData.value.conte_sexo).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_sexo) return 0;
+  return Object.values(apiData.value.conteo_sexo).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsType = computed(() => {
-  if (!apiData.value?.conte_tipo) return 0;
-  return Object.values(apiData.value.conte_tipo).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_tipo) return 0;
+  return Object.values(apiData.value.conteo_tipo).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsAge = computed(() => {
-  if (!apiData.value?.conte_edad) return 0;
-  return Object.values(apiData.value.conte_edad).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_edad) return 0;
+  return Object.values(apiData.value.conteo_edad).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsHour = computed(() => {
-  if (!apiData.value?.conte_hora) return 0;
-  return Object.values(apiData.value.conte_hora).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_hora) return 0;
+  return Object.values(apiData.value.conteo_hora).reduce((sum, count) => sum + count, 0);
 });
 
 const loadData = async () => {

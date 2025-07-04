@@ -41,10 +41,10 @@
     </div>
 
     <!-- Estado de carga o gráfico -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="text-gray-500">Cargando datos...</div>
-    </div>
-    <div v-else class="relative">
+    <div class="relative">
+      <div v-if="loading" class="flex justify-center items-center h-64 absolute inset-0 bg-white bg-opacity-75 z-10">
+        <div class="text-gray-500">Cargando datos...</div>
+      </div>
       <canvas ref="chartCanvas" width="400" height="200"></canvas>
     </div>
 
@@ -105,8 +105,9 @@ export default {
     };
   },
   mounted() {
-    this.loadData();
-    this.createChart();
+    this.$nextTick(() => {
+      this.loadData();
+    });
     
     // Actualizar datos cada 30 segundos
     this.updateInterval = setInterval(this.loadData, 30000);
@@ -139,7 +140,7 @@ export default {
         this.error = null;
         
         const apiData = await apiService.fetchData();
-        const hourData = apiData.conte_hora || {};
+        const hourData = apiData.conteo_hora || {};
         
         this.hourlyData = Object.entries(hourData)
           .map(([hour, visitors]) => ({
@@ -155,6 +156,10 @@ export default {
         
         if (this.chart) {
           this.updateChart();
+        } else {
+          this.$nextTick(() => {
+            this.createChart();
+          });
         }
       } catch (err) {
         this.error = 'Error al cargar los datos';
@@ -182,7 +187,21 @@ export default {
     },
 
     createChart() {
-      const ctx = this.$refs.chartCanvas.getContext('2d');
+      const canvas = this.$refs.chartCanvas;
+      if (!canvas) {
+        console.error('Chart canvas not found');
+        // Retry after a short delay
+        setTimeout(() => {
+          this.createChart();
+        }, 100);
+        return;
+      }
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Canvas context not available');
+        return;
+      }
 
       this.chart = new Chart(ctx, {
         type: this.chartType,

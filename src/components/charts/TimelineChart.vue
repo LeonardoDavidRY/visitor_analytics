@@ -16,18 +16,25 @@
       {{ error }}
     </div>
     
-    <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="text-gray-500">Cargando datos...</div>
+    <!-- Gráfico siempre presente -->
+    <div class="relative">
+      <canvas ref="timelineChart"></canvas>
+      
+      <!-- Overlay de carga -->
+      <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+        <div class="text-gray-500">Cargando datos...</div>
+      </div>
+      
+      <!-- Overlay de datos de muestra -->
+      <div v-if="!loading && !apiData" class="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-75">
+        <span class="text-gray-500">Usando datos de muestra</span>
+      </div>
     </div>
-    
-    <!-- Gráfico -->
-    <canvas v-else ref="timelineChart"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -45,7 +52,7 @@ const apiData = ref(null);
 const getDataByHour = () => {
   if (!apiData.value) return [];
   
-  const hourData = apiData.value.conte_hora || {};
+  const hourData = apiData.value.conteo_hora || {};
   
   return Object.entries(hourData)
     .map(([hour, totalVisitors]) => ({
@@ -60,6 +67,9 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
+    
+    // Wait for next tick to ensure DOM is ready
+    await nextTick();
     renderChart();
   } catch (err) {
     error.value = 'Error al cargar los datos';
@@ -69,9 +79,22 @@ const loadData = async () => {
   }
 };
 
-const renderChart = () => {
-  if (!timelineChart.value) return;
+const renderChart = async (retryCount = 0) => {
+  // Wait for DOM to be ready
+  await nextTick();
   
+  if (!timelineChart.value) {
+    if (retryCount < 10) { // Maximum 10 retries (1 second total)
+      console.log(`TimelineChart: Canvas not available, retry ${retryCount + 1}/10`);
+      setTimeout(() => renderChart(retryCount + 1), 100);
+      return;
+    } else {
+      console.error('TimelineChart: Canvas never became available after 10 retries');
+      return;
+    }
+  }
+  
+  console.log('TimelineChart: Canvas found, creating chart');
   const ctx = timelineChart.value.getContext('2d');
   const dataByHour = getDataByHour();
 
@@ -79,11 +102,9 @@ const renderChart = () => {
     chartInstance.destroy();
   }
 
-  // No renderizar si no hay datos
-  if (dataByHour.length === 0) {
-    return;
-  }
-
+  // Renderizar siempre, incluso con datos vacíos
+  const hasData = dataByHour.length > 0;
+  
   const color = {
     border: 'rgba(59, 130, 246, 1)',
     background: 'rgba(59, 130, 246, 0.15)',
@@ -92,11 +113,11 @@ const renderChart = () => {
   chartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: dataByHour.map((d) => `${d.hour}:00`),
+      labels: hasData ? dataByHour.map((d) => `${d.hour}:00`) : ['Sin datos'],
       datasets: [
         {
           label: 'Total de visitantes',
-          data: dataByHour.map((d) => d.totalVisitors),
+          data: hasData ? dataByHour.map((d) => d.totalVisitors) : [0],
           borderColor: color.border,
           backgroundColor: color.background,
           fill: true,
@@ -170,9 +191,16 @@ const renderChart = () => {
 };
 
 onMounted(async () => {
+  console.log('TimelineChart: Component mounted');
+  
+  // Initial chart render with empty data
+  await nextTick();
+  renderChart();
+  
+  // Load data
   await loadData();
   
-  // Actualizar datos cada 30 segundos
+  // Update every 30 seconds
   updateInterval = setInterval(loadData, 30000);
 });
 
