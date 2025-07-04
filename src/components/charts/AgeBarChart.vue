@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -44,7 +44,7 @@ const apiData = ref(null);
 const getDataByAge = () => {
   if (!apiData.value) return [];
   
-  const ageData = apiData.value.conte_edad || {};
+  const ageData = apiData.value.conteo_edad || {};
   
   return Object.entries(ageData)
     .map(([ageRange, total]) => ({ 
@@ -66,7 +66,11 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
-    renderChart();
+    
+    // Usar nextTick para asegurar que el DOM esté actualizado
+    nextTick(() => {
+      renderChart();
+    });
   } catch (err) {
     error.value = 'Error al cargar los datos';
     console.error('Error loading data:', err);
@@ -76,7 +80,10 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!ageBarChart.value) return;
+  if (!ageBarChart.value) {
+    console.warn('Canvas no disponible para AgeBarChart');
+    return;
+  }
   
   const ctx = ageBarChart.value.getContext('2d');
   const dataByAge = getDataByAge();
@@ -87,6 +94,7 @@ const renderChart = () => {
 
   // No renderizar si no hay datos
   if (dataByAge.length === 0) {
+    console.warn('No hay datos disponibles para AgeBarChart');
     return;
   }
 

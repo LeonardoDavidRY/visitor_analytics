@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -59,8 +59,8 @@ let updateInterval = null;
 const getDataByType = () => {
   if (!apiData.value) return {};
   
-  const typeData = apiData.value.conte_tipo || {};
-  const genderData = apiData.value.conte_sexo || {};
+  const typeData = apiData.value.conteo_tipo || {};
+  const genderData = apiData.value.conteo_sexo || {};
   
   // Si no hay filtro de género, devolver los datos de tipo directamente
   if (selectedGender.value === '') {
@@ -77,7 +77,11 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
-    renderChart();
+    
+    // Usar nextTick para asegurar que el DOM esté actualizado
+    nextTick(() => {
+      renderChart();
+    });
   } catch (err) {
     error.value = 'Error al cargar los datos';
     console.error('Error loading data:', err);
@@ -87,7 +91,10 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!pieChart.value) return;
+  if (!pieChart.value) {
+    console.warn('Canvas no disponible para TypePieChart');
+    return;
+  }
   
   const ctx = pieChart.value.getContext('2d');
   const typeData = getDataByType();
@@ -96,6 +103,12 @@ const renderChart = () => {
 
   if (chartInstance) {
     chartInstance.destroy();
+  }
+
+  // No renderizar si no hay datos
+  if (labels.length === 0 || data.every(value => value === 0)) {
+    console.warn('No hay datos disponibles para TypePieChart');
+    return;
   }
 
   // No renderizar si no hay datos

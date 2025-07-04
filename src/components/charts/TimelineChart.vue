@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -45,7 +45,7 @@ const apiData = ref(null);
 const getDataByHour = () => {
   if (!apiData.value) return [];
   
-  const hourData = apiData.value.conte_hora || {};
+  const hourData = apiData.value.conteo_hora || {};
   
   return Object.entries(hourData)
     .map(([hour, totalVisitors]) => ({
@@ -60,7 +60,11 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
-    renderChart();
+    
+    // Usar nextTick para asegurar que el DOM esté actualizado
+    nextTick(() => {
+      renderChart();
+    });
   } catch (err) {
     error.value = 'Error al cargar los datos';
     console.error('Error loading data:', err);
@@ -70,13 +74,22 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!timelineChart.value) return;
+  if (!timelineChart.value) {
+    console.warn('Canvas no disponible para TimelineChart');
+    return;
+  }
   
   const ctx = timelineChart.value.getContext('2d');
   const dataByHour = getDataByHour();
 
   if (chartInstance) {
     chartInstance.destroy();
+  }
+
+  // No renderizar si no hay datos
+  if (dataByHour.length === 0) {
+    console.warn('No hay datos disponibles para TimelineChart');
+    return;
   }
 
   // No renderizar si no hay datos

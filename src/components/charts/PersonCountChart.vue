@@ -139,7 +139,7 @@ export default {
         this.error = null;
         
         const apiData = await apiService.fetchData();
-        const hourData = apiData.conte_hora || {};
+        const hourData = apiData.conteo_hora || {};
         
         this.hourlyData = Object.entries(hourData)
           .map(([hour, visitors]) => ({
@@ -153,9 +153,14 @@ export default {
 
         this.calculateStats();
         
-        if (this.chart) {
-          this.updateChart();
-        }
+        // Usar nextTick para asegurar que el DOM esté actualizado antes de crear/actualizar el gráfico
+        this.$nextTick(() => {
+          if (this.chart) {
+            this.updateChart();
+          } else {
+            this.createChart();
+          }
+        });
       } catch (err) {
         this.error = 'Error al cargar los datos';
         console.error('Error loading data:', err);
@@ -182,6 +187,18 @@ export default {
     },
 
     createChart() {
+      // Verificar que el canvas esté disponible
+      if (!this.$refs.chartCanvas) {
+        console.warn('Canvas no disponible para PersonCountChart');
+        return;
+      }
+
+      // Verificar que tengamos datos
+      if (!this.hourlyData || this.hourlyData.length === 0) {
+        console.warn('No hay datos disponibles para PersonCountChart');
+        return;
+      }
+
       const ctx = this.$refs.chartCanvas.getContext('2d');
 
       this.chart = new Chart(ctx, {
@@ -195,7 +212,11 @@ export default {
       if (this.chart) {
         this.chart.destroy();
       }
-      this.createChart();
+      
+      // Usar nextTick para asegurar que el DOM esté actualizado
+      this.$nextTick(() => {
+        this.createChart();
+      });
     },
 
     getChartData() {

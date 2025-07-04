@@ -29,6 +29,9 @@
         </div>
       </div>
 
+      <!-- Panel de prueba API -->
+      <ApiTestPanel />
+
       <!-- Estado de error global -->
       <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
         {{ error }}
@@ -100,29 +103,21 @@
       <!-- Gráficos -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Gráfico de tipos -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <TypePieChart />
-        </div>
+        <SimpleTypeChart />
 
         <!-- Gráfico de edades -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <AgeBarChart />
-        </div>
+        <SimpleAgeChart />
+
+        <!-- Gráfico por género -->
+        <SimpleGenderChart />
 
         <!-- Gráfico de horas -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <TimelineChart />
-        </div>
-
-        <!-- Tabla cruzada -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <CrossTableChart />
-        </div>
+        <SimpleHourChart />
       </div>
 
-      <!-- Visitantes por hora con controles -->
+      <!-- Tabla cruzada -->
       <div class="mt-8">
-        <PersonCountChart :startHour="6" :endHour="22" />
+        <SimpleCrossTableChart />
       </div>
     </div>
   </div>
@@ -131,10 +126,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import apiService from '@/services/apiService.js';
-import TypePieChart from '@/components/charts/TypePieChart.vue';
-import AgeBarChart from '@/components/charts/AgeBarChart.vue';
-import TimelineChart from '@/components/charts/TimelineChart.vue';
-import CrossTableChart from '@/components/charts/CrossTableChart.vue';
+import ApiTestPanel from '@/components/ApiTestPanel.vue';
+import SimpleAgeChart from '@/components/charts/SimpleAgeChart.vue';
+import SimpleTypeChart from '@/components/charts/SimpleTypeChart.vue';
+import SimpleHourChart from '@/components/charts/SimpleHourChart.vue';
+import SimpleGenderChart from '@/components/charts/SimpleGenderChart.vue';
+import SimpleCrossTableChart from '@/components/charts/SimpleCrossTableChart.vue';
 import PersonCountChart from '@/components/charts/PersonCountChart.vue';
 
 const loading = ref(false);
@@ -145,23 +142,23 @@ let updateInterval = null;
 
 // Computed properties para los totales
 const totalVisitorsGender = computed(() => {
-  if (!apiData.value?.conte_sexo) return 0;
-  return Object.values(apiData.value.conte_sexo).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_sexo) return 0;
+  return Object.values(apiData.value.conteo_sexo).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsType = computed(() => {
-  if (!apiData.value?.conte_tipo) return 0;
-  return Object.values(apiData.value.conte_tipo).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_tipo) return 0;
+  return Object.values(apiData.value.conteo_tipo).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsAge = computed(() => {
-  if (!apiData.value?.conte_edad) return 0;
-  return Object.values(apiData.value.conte_edad).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_edad) return 0;
+  return Object.values(apiData.value.conteo_edad).reduce((sum, count) => sum + count, 0);
 });
 
 const totalVisitorsHour = computed(() => {
-  if (!apiData.value?.conte_hora) return 0;
-  return Object.values(apiData.value.conte_hora).reduce((sum, count) => sum + count, 0);
+  if (!apiData.value?.conteo_hora) return 0;
+  return Object.values(apiData.value.conteo_hora).reduce((sum, count) => sum + count, 0);
 });
 
 const loadData = async () => {

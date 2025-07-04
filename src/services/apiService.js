@@ -1,9 +1,11 @@
+import { API_CONFIG } from '@/config/api.js';
+
 class ApiService {
   constructor() {
-    this.baseUrl = 'https://84f7-35-234-1-134.ngrok-free.app/api';
+    this.baseUrl = API_CONFIG.BASE_URL;
     this.cache = null;
     this.lastFetch = null;
-    this.cacheTimeout = 30000; // 30 segundos de cache
+    this.cacheTimeout = API_CONFIG.CACHE_TIMEOUT;
   }
 
   async fetchData() {
@@ -11,17 +13,25 @@ class ApiService {
     
     // Si tenemos datos en cache y no han expirado, los devolvemos
     if (this.cache && this.lastFetch && (now - this.lastFetch) < this.cacheTimeout) {
+      console.log('📦 Usando datos del cache');
       return this.cache;
     }
 
+    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.DATOS}`;
+    console.log('🌐 Realizando petición a:', url);
+    console.log('📋 Headers:', API_CONFIG.HEADERS);
+
     try {
-      const response = await fetch(`${this.baseUrl}/datos`);
+      const response = await fetch(url, {
+        headers: API_CONFIG.HEADERS
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('✅ Datos recibidos exitosamente:', data);
       
       // Guardar en cache
       this.cache = data;
@@ -29,25 +39,28 @@ class ApiService {
       
       return data;
     } catch (error) {
-      console.error('Error fetching data from API:', error);
+      console.error('❌ Error fetching data from API:', error);
+      console.error('🔍 URL intentada:', url);
+      console.error('📋 Headers usados:', API_CONFIG.HEADERS);
       
       // Si hay datos en cache, devolverlos aunque hayan expirado
       if (this.cache) {
-        console.warn('Using cached data due to API error');
+        console.warn('⚠️ Usando datos del cache debido al error de API');
         return this.cache;
       }
       
       // Si no hay cache, devolver datos por defecto
+      console.warn('⚠️ Usando datos por defecto debido al error de API');
       return this.getDefaultData();
     }
   }
 
   getDefaultData() {
     return {
-      conte_edad: {},
-      conte_hora: {},
-      conte_sexo: {},
-      conte_tipo: {},
+      conteo_edad: {},
+      conteo_hora: {},
+      conteo_sexo: {},
+      conteo_tipo: {},
       tabla_cruzada_tipo_edad: {}
     };
   }
@@ -55,22 +68,22 @@ class ApiService {
   // Métodos específicos para cada tipo de dato
   async getAgeData() {
     const data = await this.fetchData();
-    return data.conte_edad || {};
+    return data.conteo_edad || {};
   }
 
   async getHourData() {
     const data = await this.fetchData();
-    return data.conte_hora || {};
+    return data.conteo_hora || {};
   }
 
   async getGenderData() {
     const data = await this.fetchData();
-    return data.conte_sexo || {};
+    return data.conteo_sexo || {};
   }
 
   async getTypeData() {
     const data = await this.fetchData();
-    return data.conte_tipo || {};
+    return data.conteo_tipo || {};
   }
 
   async getCrossTableData() {
@@ -82,6 +95,18 @@ class ApiService {
   invalidateCache() {
     this.cache = null;
     this.lastFetch = null;
+  }
+
+  // Método para actualizar la URL base
+  updateBaseUrl(newUrl) {
+    this.baseUrl = newUrl;
+    API_CONFIG.BASE_URL = newUrl;
+    this.invalidateCache(); // Invalidar cache al cambiar URL
+  }
+
+  // Método para obtener la URL actual
+  getCurrentUrl() {
+    return this.baseUrl;
   }
 }
 

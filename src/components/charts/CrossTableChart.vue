@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import apiService from '@/services/apiService.js';
 
@@ -89,7 +89,11 @@ const loadData = async () => {
     loading.value = true;
     error.value = null;
     apiData.value = await apiService.fetchData();
-    renderChart();
+    
+    // Usar nextTick para asegurar que el DOM esté actualizado
+    nextTick(() => {
+      renderChart();
+    });
   } catch (err) {
     error.value = 'Error al cargar los datos';
     console.error('Error loading data:', err);
@@ -99,13 +103,23 @@ const loadData = async () => {
 };
 
 const renderChart = () => {
-  if (!crossTableChart.value) return;
+  if (!crossTableChart.value) {
+    console.warn('Canvas no disponible para CrossTableChart');
+    return;
+  }
   
   const ctx = crossTableChart.value.getContext('2d');
   const chartData = getCrossTableData();
 
   if (chartInstance) {
     chartInstance.destroy();
+  }
+
+  // No renderizar si no hay datos
+  if (!chartData.labels || chartData.labels.length === 0 || 
+      !chartData.datasets || chartData.datasets.length === 0) {
+    console.warn('No hay datos disponibles para CrossTableChart');
+    return;
   }
 
   // No renderizar si no hay datos
