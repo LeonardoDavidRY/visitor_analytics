@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
+    component: () => import('../views/SystemStatus.vue'),
   },
   {
     path: '/dashboard',
@@ -77,6 +77,21 @@ const routes = [
     path: '/api-dashboard',
     name: 'api-dashboard',
     component: ApiDashboard,
+  },
+  {
+    path: '/detecciones',
+    name: 'detecciones',
+    component: () => import('../views/DeteccionesDashboard.vue'),
+  },
+  {
+    path: '/detecciones-timeline',
+    name: 'detecciones-timeline',
+    component: () => import('../views/DeteccionesTimelineView.vue'),
+  },
+  {
+    path: '/detecciones-heatmap',
+    name: 'detecciones-heatmap', 
+    component: () => import('../views/DeteccionesHeatmapView.vue'),
   },
  
   // Rutas legacy (accesibles directamente pero no en menú)

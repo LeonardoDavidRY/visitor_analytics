@@ -3,7 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     proxy: {
-      '/api': {
+      '/api/datos': {
         target: 'https://bc25-186-69-112-160.ngrok-free.app',
         changeOrigin: true,
         secure: true,
@@ -13,6 +13,11 @@ module.exports = defineConfig({
         onProxyReq: function(proxyReq, req, res) {
           proxyReq.setHeader('ngrok-skip-browser-warning', 'true');
         }
+      },
+      '/api/detecciones': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false
       }
     }
   }

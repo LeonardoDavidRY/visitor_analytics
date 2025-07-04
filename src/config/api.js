@@ -4,11 +4,19 @@ export const API_CONFIG = {
   BASE_URL: '/api',
   
   // URL directa para cuando no se use proxy (para reference)
-  DIRECT_URL: 'https://bc25-186-69-112-160.ngrok-free.app/api',
+  DIRECT_URL: 'https://8082-34-150-208-222.ngrok-free.app/api',
+  
+  // URL local para detecciones (localhost)
+  LOCAL_BASE_URL: 'http://localhost:8080/api',
   
   // Headers necesarios para ngrok
   HEADERS: {
     'ngrok-skip-browser-warning': 'true',
+    'Content-Type': 'application/json'
+  },
+  
+  // Headers para local
+  LOCAL_HEADERS: {
     'Content-Type': 'application/json'
   },
   
@@ -17,7 +25,9 @@ export const API_CONFIG = {
   
   // Endpoints disponibles
   ENDPOINTS: {
-    DATOS: '/datos'
+    DATOS: '/datos',
+    TIMESTAMPS: '/detecciones/timestamps',
+    DETECCIONES: '/detecciones'
   }
 };
 
