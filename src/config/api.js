@@ -7,7 +7,7 @@ export const API_CONFIG = {
   DIRECT_URL: 'https://8082-34-150-208-222.ngrok-free.app/api',
   
   // URL local para detecciones (localhost)
-  LOCAL_BASE_URL: 'http://localhost:8080/api',
+  LOCAL_BASE_URL: 'http://192.168.232.129:8080/api',
   
   // Headers necesarios para ngrok
   HEADERS: {

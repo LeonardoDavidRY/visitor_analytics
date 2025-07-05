@@ -174,7 +174,10 @@
       <main
         class="flex-1 max-w-6xl mx-auto p-6 rounded-2xl bg-white/80 shadow-lg w-full overflow-auto"
       >
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <component :is="Component" v-if="Component" />
+          <HelloWorld v-else msg="Proyecto de Análisis de Visitantes" />
+        </router-view>
       </main>
       <footer class="text-center text-gray-500 py-3 text-sm bg-transparent">
         © {{ new Date().getFullYear() }} Visitor Analytics · Hecho con
@@ -188,6 +191,7 @@
 import { ref, onMounted } from 'vue';
 import apiService from '@/services/apiService.js';
 import deteccionesService from '@/services/deteccionesService.js';
+import HelloWorld from '@/components/HelloWorld.vue';
 
 // Estado reactivo
 const apiStatus = ref({
@@ -199,7 +203,7 @@ const lastCheck = ref('');
 
 // Enlaces organizados por categorías
 const dashboardLinks = [
-  { to: '/', label: 'Inicio', api: null },
+  { to: '/', label: 'Estado del Sistema', api: null },
   { to: '/dashboard', label: 'Dashboard Principal', api: null },
   { to: '/api-dashboard', label: 'Dashboard API', api: 'main' },
   { to: '/detecciones', label: 'Dashboard Detecciones', api: 'detecciones' },

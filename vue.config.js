@@ -4,7 +4,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api/datos': {
-        target: 'https://bc25-186-69-112-160.ngrok-free.app',
+        target: 'https://8082-34-150-208-222.ngrok-free.app',
         changeOrigin: true,
         secure: true,
         headers: {
@@ -15,7 +15,7 @@ module.exports = defineConfig({
         }
       },
       '/api/detecciones': {
-        target: 'http://localhost:8080',
+        target: 'http://192.168.232.129:8080',
         changeOrigin: true,
         secure: false
       }

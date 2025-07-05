@@ -115,10 +115,10 @@
         <SimpleHourChart />
       </div>
 
-      <!-- Tabla cruzada -->
+      <!-- Tabla cruzada 
       <div class="mt-8">
         <SimpleCrossTableChart />
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
