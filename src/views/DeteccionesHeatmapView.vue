@@ -16,7 +16,7 @@
               ]"
             ></div>
             <span class="text-sm text-gray-600">
-              {{ isConnected ? 'API Conectada' : 'API Desconectada' }}
+              {{ dataSourceInfo.isMock ? 'Datos Mock Cargados' : (isConnected ? 'API Conectada' : 'API Desconectada') }}
             </span>
           </div>
           <button 
@@ -43,20 +43,27 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600">
           <div>
             <strong>Fuente de datos:</strong><br>
-            API de Detecciones (localhost:8080)
-          </div>
-          <div>
-            <strong>Endpoint principal:</strong><br>
-            /api/detecciones/timestamps
-          </div>
-          <div>
-            <strong>Endpoint detecciones:</strong><br>
-            /api/detecciones?segundo=...
+            {{ dataSourceInfo.source }}
           </div>
           <div>
             <strong>Tipo de datos:</strong><br>
-            Coordenadas cartesianas (x, y)
+            {{ dataSourceInfo.isMock ? 'Mock Data (JSON)' : 'API Real' }}
           </div>
+          <div>
+            <strong>Formato:</strong><br>
+            {{ dataSourceInfo.isMock ? 'MongoDB JSON' : 'HTTP JSON' }}
+          </div>
+          <div>
+            <strong>Coordenadas:</strong><br>
+            Cartesianas (x, y)
+          </div>
+        </div>
+        
+        <!-- Información adicional del origen -->
+        <div class="mt-4 p-3 rounded-lg" :class="dataSourceInfo.isMock ? 'bg-green-50 text-green-800' : 'bg-blue-50 text-blue-800'">
+          <p class="text-sm">
+            <strong>📄 Descripción:</strong> {{ dataSourceInfo.description }}
+          </p>
         </div>
       </div>
 
@@ -129,20 +136,33 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import DeteccionesHeatmap from '@/components/charts/DeteccionesHeatmap.vue';
-import deteccionesService from '@/services/deteccionesService.js';
+import { getDeteccionesService, getDataSourceInfo } from '@/config/deteccionesConfig.js';
 
 const loading = ref(false);
 const error = ref(null);
 const isConnected = ref(false);
 const heatmapRef = ref(null);
 
+// Servicio de detecciones (se cargará dinámicamente)
+let deteccionesService = null;
+
+// Información del origen de datos
+const dataSourceInfo = getDataSourceInfo();
+
 const refreshData = async () => {
   loading.value = true;
   error.value = null;
 
   try {
-    // Limpiar cache
-    deteccionesService.invalidateAllCache();
+    // Obtener servicio si no está cargado
+    if (!deteccionesService) {
+      deteccionesService = await getDeteccionesService();
+    }
+    
+    // Limpiar cache si es un servicio real
+    if (deteccionesService.invalidateAllCache) {
+      deteccionesService.invalidateAllCache();
+    }
     
     // Refrescar componente
     if (heatmapRef.value && heatmapRef.value.loadTimestamps) {
@@ -160,8 +180,18 @@ const refreshData = async () => {
 
 const checkConnection = async () => {
   try {
-    const data = await deteccionesService.fetchTimestamps();
-    isConnected.value = !!(data && data.success);
+    if (!deteccionesService) {
+      deteccionesService = await getDeteccionesService();
+    }
+    
+    if (dataSourceInfo.isMock) {
+      // Para datos mock, siempre está "conectado"
+      isConnected.value = true;
+    } else {
+      // Para API real, verificar conexión
+      const data = await deteccionesService.fetchTimestamps();
+      isConnected.value = !!(data && data.success);
+    }
   } catch (err) {
     isConnected.value = false;
   }

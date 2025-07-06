@@ -1,223 +1,228 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-semibold text-gray-800">Mapa de Calor - Coordenadas</h3>
-      <div class="flex space-x-2">
-        <button
-          @click="loadTimestamps" 
-          :disabled="loading"
-          class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 text-sm"
-        >
-          {{ loading ? 'Cargando...' : 'Actualizar' }}
-        </button>
-        <button
-          @click="toggleAutoRefresh"
-          :class="[
-            'px-3 py-1 rounded text-sm',
-            autoRefresh ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          ]"
-        >
-          {{ autoRefresh ? '⏸ Auto' : '▶ Auto' }}
-        </button>
-        <button
-          @click="toggleAutoPlay"
-          :class="[
-            'px-3 py-1 rounded text-sm',
-            autoPlay ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          ]"
-        >
-          {{ autoPlay ? '⏸ Play' : '▶ Play' }}
-        </button>
-        <button
-          @click="togglePersistence"
-          :class="[
-            'px-3 py-1 rounded text-sm',
-            persistData ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          ]"
-        >
-          {{ persistData ? '🔒 Fijar' : '🔓 Fijar' }}
-        </button>
+  <div class="heatmap-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🔥 Mapa de Calor - Detección de Personas</h1>
+      <p>Visualización en tiempo real de la actividad detectada</p>
+      <div class="data-source-badge">
+        <span :class="dataSourceInfo.isMock ? 'badge-mock' : 'badge-real'">
+          {{ dataSourceInfo.isMock ? '📊 DATOS MOCK' : '🌐 API REAL' }}
+        </span>
       </div>
     </div>
 
-    <!-- Slider de timestamp -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">
-        Navegar por momentos temporales:
-      </label>
-      
-      <!-- Información del timestamp actual -->
-      <div class="bg-gray-50 p-3 rounded-lg mb-3">
-        <div class="flex justify-between items-center">
-          <div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ selectedTimestamp ? formatTimestamp(selectedTimestamp) : 'Sin selección' }}
-            </div>
-            <div class="text-sm text-gray-600">
-              {{ currentTimestampIndex >= 0 && uniqueTimestamps?.length > 0 ? `${currentTimestampIndex + 1} de ${uniqueTimestamps.length}` : 'No hay datos' }}
-            </div>
-          </div>
-          <button
-            @click="useLatestTimestamp"
-            :disabled="loading || uniqueTimestamps.length === 0"
-            class="px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50 text-sm"
+    <!-- Controls -->
+    <div class="controls">
+      <!-- Timeline Control -->
+      <div class="control-group">
+        <label for="timeSlider">Línea de Tiempo:</label>
+        <div class="slider-container">
+          <input 
+            type="range" 
+            id="timeSlider" 
+            class="time-slider" 
+            v-model="currentTimestampIndex"
+            @input="onSliderChange"
+            :min="0" 
+            :max="Math.max(0, (uniqueTimestamps?.length || 1) - 1)"
+            :disabled="loading || (uniqueTimestamps?.length || 0) === 0"
           >
-            Más Reciente
-          </button>
+        </div>
+        <div class="time-display">
+          {{ selectedTimestamp ? formatTimestamp(selectedTimestamp) : 'Cargando...' }}
         </div>
       </div>
 
-      <!-- Controles de navegación -->
-      <div class="flex items-center gap-3 mb-3">
-        <button
-          @click="previousTimestamp"
-          :disabled="loading || currentTimestampIndex <= 0"
-          class="flex items-center px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 text-sm"
-        >
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          Anterior
-        </button>
-        
-        <div class="flex-1 px-2">
-          <input
-            type="range"
-            v-model="currentTimestampIndex"
-            @input="onSliderChange"
-            :min="0"
-            :max="Math.max(0, (uniqueTimestamps?.length || 1) - 1)"
-            :disabled="loading || (uniqueTimestamps?.length || 0) === 0"
-            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-          >
+      <!-- Progress Info -->
+      <div class="progress-info">
+        <div class="progress-text">
+          <span>Progreso: {{ currentTimestampIndex + 1 }} / {{ uniqueTimestamps?.length || 0 }}</span>
+          <span class="time-range" v-if="uniqueTimestamps?.length > 0">
+            {{ formatTimestamp(uniqueTimestamps[0], true) }} → {{ formatTimestamp(uniqueTimestamps[uniqueTimestamps.length - 1], true) }}
+          </span>
         </div>
-        
-        <button
-          @click="nextTimestamp"
-          :disabled="loading || currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1"
-          class="flex items-center px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 text-sm"
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            :style="{ width: `${(uniqueTimestamps?.length || 0) > 0 ? ((currentTimestampIndex + 1) / (uniqueTimestamps?.length || 1)) * 100 : 0}%` }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value">{{ totalPersonas }}</div>
+          <div class="stat-label">Personas Detectadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ deteccionesData?.total_encontradas || 0 }}</div>
+          <div class="stat-label">Total Detecciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ totalCoordenadas }}</div>
+          <div class="stat-label">Coordenadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ formatTimestamp(selectedTimestamp, true) }}</div>
+          <div class="stat-label">Momento Actual</div>
+        </div>
+      </div>
+
+      <!-- Control Buttons -->
+      <div class="controls-buttons">
+        <button 
+          @click="play" 
+          :disabled="loading || (uniqueTimestamps?.length || 0) === 0"
+          class="btn btn-primary"
         >
-          Siguiente
-          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
+          {{ autoPlay ? '⏸️ Pausar' : '▶️ Reproducir' }}
+        </button>
+        <button 
+          @click="goToFirst" 
+          :disabled="loading || currentTimestampIndex <= 0"
+          class="btn btn-secondary"
+        >
+          ⏮️⏮️ Principio
+        </button>
+        <button 
+          @click="previousTimestamp" 
+          :disabled="loading || currentTimestampIndex <= 0"
+          class="btn btn-secondary"
+        >
+          ⏮️ Anterior
+        </button>
+        <button 
+          @click="nextTimestamp" 
+          :disabled="loading || currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1"
+          class="btn btn-secondary"
+        >
+          ⏭️ Siguiente
+        </button>
+        <button 
+          @click="goToLast" 
+          :disabled="loading || currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1"
+          class="btn btn-secondary"
+        >
+          ⏭️⏭️ Final
+        </button>
+        <button 
+          @click="reset" 
+          :disabled="loading"
+          class="btn btn-secondary"
+        >
+          🔄 Reiniciar
+        </button>
+        <button 
+          @click="loadTimestamps" 
+          :disabled="loading"
+          class="btn btn-primary"
+        >
+          📊 Actualizar Datos
         </button>
       </div>
-      
-      <!-- Indicador de progreso -->
-      <div class="w-full bg-gray-200 rounded-full h-1">
-        <div 
-          class="bg-blue-500 h-1 rounded-full transition-all duration-300"
-          :style="{ width: `${(uniqueTimestamps?.length || 0) > 0 ? ((currentTimestampIndex + 1) / (uniqueTimestamps?.length || 1)) * 100 : 0}%` }"
-        ></div>
-      </div>
-      
-      <!-- Controles adicionales -->
-      <div class="flex justify-between items-center mt-3 text-sm">
-        <div class="flex items-center gap-3">
-          <label class="text-gray-600">Velocidad:</label>
+
+      <!-- Advanced Controls -->
+      <div class="advanced-controls">
+        <div class="control-item">
+          <label>Velocidad:</label>
           <select 
             v-model="playbackSpeed" 
             @change="updatePlaybackSpeed"
-            class="border border-gray-300 rounded px-2 py-1 text-sm"
+            class="speed-select"
           >
-            <option value="500">Muy Rápido (0.5s)</option>
-            <option value="1000">Rápido (1s)</option>
-            <option value="2000">Normal (2s)</option>
-            <option value="3000">Lento (3s)</option>
-            <option value="5000">Muy Lento (5s)</option>
+            <option 
+              v-for="speed in CONFIG.INTERVALS.PLAYBACK_SPEEDS" 
+              :key="speed.value" 
+              :value="speed.value"
+            >
+              {{ speed.label }}
+            </option>
           </select>
         </div>
         
-        <div class="flex items-center gap-3">
-          <span class="text-gray-600">
-            Estado: 
-            <span :class="getStatusClass()">{{ getStatusText() }}</span>
-          </span>
+        <div class="control-item">
+          <button
+            @click="togglePersistence"
+            :class="['btn', 'btn-toggle', persistData ? 'active' : '']"
+          >
+            {{ persistData ? '🔒 Datos Fijos' : '🔓 Datos Dinámicos' }}
+          </button>
+        </div>
+        
+        <div class="control-item">
           <button
             @click="clearCanvas"
-            class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+            class="btn btn-danger"
           >
-            Limpiar
+            🧹 Limpiar Canvas
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Estado de error -->
-    <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    <!-- Loading State -->
+    <div v-if="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Cargando datos de detección...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-if="error" class="error">
       {{ error }}
     </div>
 
-    <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-    </div>
-
-    <!-- Info de detecciones -->
-    <div v-else-if="deteccionesData && deteccionesData.success" class="mb-4">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <div class="bg-blue-50 p-3 rounded">
-          <div class="text-2xl font-bold text-blue-600">{{ deteccionesData.total_encontradas }}</div>
-          <div class="text-sm text-gray-600">Detecciones</div>
-        </div>
-        <div class="bg-green-50 p-3 rounded">
-          <div class="text-2xl font-bold text-green-600">{{ totalPersonas }}</div>
-          <div class="text-sm text-gray-600">Total Personas</div>
-        </div>
-        <div class="bg-purple-50 p-3 rounded">
-          <div class="text-2xl font-bold text-purple-600">{{ totalCoordenadas }}</div>
-          <div class="text-sm text-gray-600">Coordenadas</div>
-        </div>
-        <div class="bg-orange-50 p-3 rounded">
-          <div class="text-2xl font-bold text-orange-600">{{ formatTimestamp(selectedTimestamp, true) }}</div>
-          <div class="text-sm text-gray-600">Momento</div>
-        </div>
-      </div>
-
-      <!-- Canvas del mapa de calor -->
-      <div class="relative border border-gray-300 rounded-lg overflow-hidden">
+    <!-- Visualization -->
+    <div v-if="!loading && !error" class="visualization">
+      <div class="heatmap-canvas-container">
         <canvas 
           ref="heatmapCanvas" 
           :width="canvasWidth" 
           :height="canvasHeight"
-          class="block mx-auto"
+          class="heatmap-canvas"
         ></canvas>
         
-        <!-- Leyenda -->
-        <div class="absolute top-4 right-4 bg-white bg-opacity-90 p-3 rounded shadow">
-          <div class="text-sm font-medium mb-2">Densidad</div>
-          <div class="flex items-center space-x-2">
-            <div class="w-4 h-4 bg-blue-200 rounded"></div>
-            <span class="text-xs">Baja</span>
+        <!-- Legend -->
+        <div class="legend">
+          <h4>Leyenda</h4>
+          <div class="legend-item">
+            <div class="legend-color person-detected"></div>
+            <span>Persona detectada</span>
           </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-4 h-4 bg-yellow-400 rounded"></div>
-            <span class="text-xs">Media</span>
+          <div class="legend-item">
+            <div class="legend-color high-activity"></div>
+            <span>Zona de alta actividad</span>
           </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-4 h-4 bg-red-500 rounded"></div>
-            <span class="text-xs">Alta</span>
+          <div class="legend-item">
+            <div class="legend-color medium-activity"></div>
+            <span>Actividad media</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color low-activity"></div>
+            <span>Actividad baja</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Sin datos -->
-    <div v-else class="flex flex-col items-center justify-center h-64 text-gray-500">
-      <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-      </svg>
-      <p class="text-lg font-medium">No hay detecciones para mostrar</p>
-      <p class="text-sm mt-1">Selecciona un timestamp o carga datos</p>
+    <!-- No Data State -->
+    <div v-if="!loading && !error && (!deteccionesData || !deteccionesData.success)" class="no-data">
+      <div class="no-data-icon">📊</div>
+      <h3>No hay detecciones para mostrar</h3>
+      <p>Selecciona un timestamp o carga datos para visualizar el mapa de calor</p>
+      <button @click="loadTimestamps" class="btn btn-primary">
+        Cargar Datos
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
-import deteccionesService from '@/services/deteccionesService.js';
+import { CONFIG, getDeteccionesService, getDataSourceInfo } from '@/config/deteccionesConfig.js';
+
+// Servicio de detecciones (se cargará dinámicamente)
+let deteccionesService = null;
 
 // Referencias reactivas
 const loading = ref(false);
@@ -230,12 +235,15 @@ const heatmapCanvas = ref(null);
 const autoRefresh = ref(false);
 const autoPlay = ref(false);
 const persistData = ref(false);
-const playbackSpeed = ref(2000);
+const playbackSpeed = ref(CONFIG.INTERVALS.DEFAULT_PLAYBACK);
 const lastDrawnData = ref(null);
 
 // Configuración del canvas
-const canvasWidth = 800;
-const canvasHeight = 600;
+const canvasWidth = CONFIG.CANVAS.WIDTH;
+const canvasHeight = CONFIG.CANVAS.HEIGHT;
+
+// Información sobre el origen de los datos
+const dataSourceInfo = getDataSourceInfo();
 
 // Intervalo para auto-refresh - inicializar como null
 let autoRefreshInterval = null;
@@ -266,8 +274,66 @@ const totalCoordenadas = computed(() => {
   }
 });
 
-// Métodos
+// Métodos principales
+const play = () => {
+  if (autoPlay.value) {
+    // Si está reproduciendo, pausar
+    toggleAutoPlay();
+  } else {
+    // Si está pausado, reproducir
+    toggleAutoPlay();
+  }
+};
+
+const reset = async () => {
+  try {
+    // Detener auto-play si está activo
+    if (autoPlay.value) {
+      toggleAutoPlay();
+    }
+    
+    // Ir al primer timestamp (principio cronológico)
+    currentTimestampIndex.value = 0;
+    if (uniqueTimestamps.value.length > 0) {
+      selectedTimestamp.value = uniqueTimestamps.value[0];
+      await loadDetecciones();
+    }
+  } catch (err) {
+    console.error('Error en reset:', err);
+  }
+};
+
+const goToFirst = async () => {
+  try {
+    currentTimestampIndex.value = 0;
+    if (uniqueTimestamps.value.length > 0) {
+      selectedTimestamp.value = uniqueTimestamps.value[0];
+      await loadDetecciones();
+    }
+  } catch (err) {
+    console.error('Error en goToFirst:', err);
+  }
+};
+
+const goToLast = async () => {
+  try {
+    currentTimestampIndex.value = uniqueTimestamps.value.length - 1;
+    if (uniqueTimestamps.value.length > 0) {
+      selectedTimestamp.value = uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
+      await loadDetecciones();
+    }
+  } catch (err) {
+    console.error('Error en goToLast:', err);
+  }
+};
+
 const loadTimestamps = async () => {
+  if (!deteccionesService) {
+    console.error('❌ Servicio de detecciones no inicializado');
+    error.value = 'Servicio no disponible';
+    return;
+  }
+  
   try {
     loading.value = true;
     error.value = null;
@@ -275,7 +341,11 @@ const loadTimestamps = async () => {
     const timestamps = await deteccionesService.getTimestampsUnicos();
     uniqueTimestamps.value = timestamps;
     
-    // Si no hay timestamp seleccionado, usar el más reciente
+    console.log('📅 Timestamps cargados:', timestamps.length);
+    console.log('📅 Primer timestamp (más antiguo):', timestamps[0]);
+    console.log('📅 Último timestamp (más reciente):', timestamps[timestamps.length - 1]);
+    
+    // Si no hay timestamp seleccionado, usar el primer timestamp cronológico (más antiguo)
     if (!selectedTimestamp.value && timestamps.length > 0) {
       currentTimestampIndex.value = 0;
       selectedTimestamp.value = timestamps[0];
@@ -295,6 +365,12 @@ const loadTimestamps = async () => {
 
 const loadDetecciones = async () => {
   if (!selectedTimestamp.value) return;
+  
+  if (!deteccionesService) {
+    console.error('❌ Servicio de detecciones no inicializado');
+    error.value = 'Servicio no disponible';
+    return;
+  }
   
   try {
     loading.value = true;
@@ -329,8 +405,9 @@ const loadDetecciones = async () => {
 
 const useLatestTimestamp = async () => {
   if (uniqueTimestamps.value.length > 0) {
-    currentTimestampIndex.value = 0;
-    selectedTimestamp.value = uniqueTimestamps.value[0];
+    // Ahora que están ordenados cronológicamente, el último índice es el más reciente
+    currentTimestampIndex.value = uniqueTimestamps.value.length - 1;
+    selectedTimestamp.value = uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
     await loadDetecciones();
   }
 };
@@ -377,7 +454,7 @@ const drawHeatmap = () => {
     const canvas = heatmapCanvas.value;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.fillStyle = '#f8fafc';
+    ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     drawGrid(ctx);
     
@@ -396,7 +473,7 @@ const drawHeatmap = () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     
     // Dibujar fondo
-    ctx.fillStyle = '#f8fafc';
+    ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
     // Dibujar grilla
@@ -412,7 +489,14 @@ const drawHeatmap = () => {
     if (deteccion.coordenadas && Array.isArray(deteccion.coordenadas)) {
       console.log(`📌 Procesando ${deteccion.coordenadas.length} coordenadas de detección ID: ${deteccion.id}`);
       console.log('📍 Coordenadas:', deteccion.coordenadas);
-      allCoordinates.push(...deteccion.coordenadas);
+      
+      // Validar que las coordenadas tengan el formato correcto
+      const validCoordinates = deteccion.coordenadas.filter(coord => 
+        coord && typeof coord.x === 'number' && typeof coord.y === 'number'
+      );
+      console.log(`✅ Coordenadas válidas: ${validCoordinates.length}/${deteccion.coordenadas.length}`);
+      
+      allCoordinates.push(...validCoordinates);
     } else {
       console.warn('⚠️ Detección sin coordenadas válidas:', deteccion);
     }
@@ -462,13 +546,13 @@ const drawHeatmap = () => {
 };
 
 const createDensityMap = (coordinates, scaleX, scaleY, minX, minY) => {
-  const gridSize = 20;
+  const gridSize = CONFIG.CANVAS.GRID_SIZE;
   const density = [];
   
   for (let x = 0; x < canvasWidth; x += gridSize) {
     for (let y = 0; y < canvasHeight; y += gridSize) {
       let count = 0;
-      const radius = 30;
+      const radius = CONFIG.CANVAS.HEATMAP_RADIUS;
       
       coordinates.forEach(coord => {
         const pixelX = (coord.x - minX) * scaleX + 50;
@@ -543,39 +627,59 @@ const drawPoints = (ctx, coordinates, scaleX, scaleY, minX, minY) => {
     
     console.log(`Punto ${index}: (${coord.x}, ${coord.y}) -> canvas (${x.toFixed(1)}, ${y.toFixed(1)})`);
     
-    // Dibujar círculo principal
-    ctx.fillStyle = '#dc2626'; // Rojo más visible
+    // Efecto de pulsación - círculo exterior
     ctx.beginPath();
-    ctx.arc(x, y, 6, 0, 2 * Math.PI);
-    ctx.fill();
-    
-    // Borde blanco
-    ctx.strokeStyle = '#ffffff';
+    ctx.arc(x, y, 15, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    // Punto central
-    ctx.fillStyle = '#7c2d12';
+    // Círculo principal de la persona
     ctx.beginPath();
-    ctx.arc(x, y, 2, 0, 2 * Math.PI);
+    ctx.arc(x, y, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff6b6b';
     ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
     
-    // Etiquetar algunos puntos con mayor espaciado
+    // Número de persona en el centro
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText((index + 1).toString(), x, y);
+    
+    // Información de coordenadas cada 3 puntos
     if (index % 3 === 0) {
-      ctx.fillStyle = '#374151';
-      ctx.font = 'bold 11px Arial';
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 3;
-      ctx.strokeText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 8, y - 8);
-      ctx.fillText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 8, y - 8);
+      ctx.fillStyle = CONFIG.COLORS.TEXT;
+      ctx.font = 'bold 10px Arial';
+      ctx.strokeStyle = CONFIG.COLORS.POINT_BORDER;
+      ctx.lineWidth = 2;
+      ctx.strokeText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 12, y - 12);
+      ctx.fillText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 12, y - 12);
     }
   });
+  
+  // Dibujar información de la detección en la esquina
+  if (coordinates.length > 0) {
+    const info = `${coordinates.length} persona${coordinates.length !== 1 ? 's' : ''} detectada${coordinates.length !== 1 ? 's' : ''}`;
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.fillRect(10, 10, 280, 35);
+    
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(info, 20, 27);
+  }
   
   console.log('✅ Puntos dibujados exitosamente');
 };
 
 const drawGrid = (ctx) => {
-  ctx.strokeStyle = '#e5e7eb';
+  ctx.strokeStyle = CONFIG.COLORS.GRID;
   ctx.lineWidth = 1;
   
   // Líneas verticales
@@ -616,7 +720,7 @@ const toggleAutoRefresh = () => {
         } catch (err) {
           console.error('Error en auto-refresh:', err);
         }
-      }, 5000);
+      }, CONFIG.INTERVALS.AUTO_REFRESH);
     } else {
       if (autoRefreshInterval) {
         clearInterval(autoRefreshInterval);
@@ -716,7 +820,7 @@ const clearCanvas = () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     
     // Dibujar fondo y grilla
-    ctx.fillStyle = '#f8fafc';
+    ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     drawGrid(ctx);
     
@@ -791,6 +895,11 @@ const validateComponent = () => {
 onMounted(async () => {
   try {
     console.log('🚀 Componente DeteccionesHeatmap montado');
+    
+    // Cargar el servicio de detecciones dinámicamente
+    deteccionesService = await getDeteccionesService();
+    console.log('📡 Servicio de detecciones cargado:', dataSourceInfo);
+    
     await loadTimestamps();
   } catch (err) {
     console.error('Error en onMounted:', err);
@@ -820,47 +929,566 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-canvas {
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Estilos para el slider */
-.slider {
-  height: 6px;
-  border-radius: 3px;
-  background: #e5e7eb;
+.heatmap-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.heatmap-container > div {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  text-align: center;
+  position: relative;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+.data-source-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.badge-mock {
+  background: rgba(34, 197, 94, 0.9);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.badge-real {
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.controls {
+  padding: 30px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.control-group label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 120px;
+}
+
+.slider-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.time-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #ddd;
   outline: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
 }
 
-.slider:hover {
-  opacity: 1;
-}
-
-.slider::-webkit-slider-thumb {
+.time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: #667eea;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
-.slider::-webkit-slider-thumb:hover {
-  background: #2563eb;
+.time-slider::-webkit-slider-thumb:hover {
+  background: #5a6fd8;
+  transform: scale(1.1);
 }
 
-.slider::-moz-range-thumb {
+.time-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #3b82f6;
+  background: #667eea;
   cursor: pointer;
   border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.time-display {
+  background: #667eea;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  min-width: 200px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Progress Info */
+.progress-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.time-range {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  text-align: center;
+  flex: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.stat-value {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #6c757d;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.controls-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.advanced-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-item label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9em;
+}
+
+.speed-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9em;
+  background: white;
+  cursor: pointer;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #5a6fd8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.btn-toggle {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.btn-toggle.active {
+  background: #28a745;
+  color: white;
+}
+
+.btn-toggle:hover:not(:disabled) {
+  background: #dee2e6;
+  transform: translateY(-2px);
+}
+
+.btn-toggle.active:hover:not(:disabled) {
+  background: #218838;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #6c757d;
+  background: white;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px;
+  border: 1px solid #f5c6cb;
+  font-weight: 500;
+}
+
+.visualization {
+  padding: 30px;
+  background: white;
+}
+
+.heatmap-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heatmap-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  display: block;
+}
+
+.legend {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  backdrop-filter: blur(10px);
+}
+
+.legend h4 {
+  margin-bottom: 15px;
+  color: #495057;
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.legend-color.person-detected {
+  background: #ff6b6b;
+}
+
+.legend-color.high-activity {
+  background: #ff3838;
+}
+
+.legend-color.medium-activity {
+  background: #ffd93d;
+}
+
+.legend-color.low-activity {
+  background: #74c0fc;
+}
+
+.legend-item span {
+  font-size: 0.9em;
+  color: #495057;
+  font-weight: 500;
+}
+
+.no-data {
+  text-align: center;
+  padding: 80px 40px;
+  color: #6c757d;
+  background: white;
+}
+
+.no-data-icon {
+  font-size: 4em;
+  margin-bottom: 20px;
+}
+
+.no-data h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.no-data p {
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heatmap-container {
+    padding: 10px;
+  }
+  
+  .header {
+    padding: 20px;
+  }
+  
+  .header h1 {
+    font-size: 2em;
+  }
+  
+  .controls {
+    padding: 20px;
+  }
+  
+  .control-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .control-group label {
+    min-width: auto;
+  }
+  
+  .slider-container {
+    min-width: auto;
+  }
+  
+  .time-display {
+    min-width: auto;
+  }
+  
+  .stats {
+    flex-direction: column;
+  }
+  
+  .stat-card {
+    min-width: auto;
+  }
+  
+  .controls-buttons {
+    flex-direction: column;
+  }
+  
+  .advanced-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .control-item {
+    justify-content: space-between;
+  }
+  
+  .visualization {
+    padding: 20px;
+  }
+  
+  .heatmap-canvas-container {
+    height: 400px;
+  }
+  
+  .legend {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 20px;
+  }
+  
+  .data-source-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 15px;
+  }
+}
+
+/* Animaciones adicionales */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card {
+  animation: fadeInUp 0.5s ease;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
 </style>
