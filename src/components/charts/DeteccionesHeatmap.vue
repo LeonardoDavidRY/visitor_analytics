@@ -1,50 +1,60 @@
 <template>
-  <div class="heatmap-container">
-    <!-- Header 
-    <div class="header">
-      <h1>🔥 Mapa de Calor - Detección de Personas</h1>
-      <p>Visualización en tiempo real de la actividad detectada</p>
-      <div class="data-source-badge">
-        <span :class="dataSourceInfo.isMock ? 'badge-mock' : 'badge-real'">
-          {{ dataSourceInfo.isMock ? '📊 DATOS MOCK' : '🌐 API REAL' }}
-        </span>
-      </div>
-    </div>-->
-
+  <div>
     <!-- Controls -->
     <div class="controls">
       <!-- Timeline Control -->
       <div class="control-group">
         <label for="timeSlider">Línea de Tiempo:</label>
         <div class="slider-container">
-          <input 
-            type="range" 
-            id="timeSlider" 
-            class="time-slider" 
+          <input
+            type="range"
+            id="timeSlider"
+            class="time-slider"
             v-model="currentTimestampIndex"
             @input="onSliderChange"
-            :min="0" 
+            :min="0"
             :max="Math.max(0, (uniqueTimestamps?.length || 1) - 1)"
             :disabled="loading || (uniqueTimestamps?.length || 0) === 0"
-          >
+          />
         </div>
         <div class="time-display">
-          {{ selectedTimestamp ? formatTimestamp(selectedTimestamp) : 'Cargando...' }}
+          {{
+            selectedTimestamp
+              ? formatTimestamp(selectedTimestamp)
+              : 'Cargando...'
+          }}
         </div>
       </div>
 
       <!-- Progress Info -->
       <div class="progress-info">
         <div class="progress-text">
-          <span>Progreso: {{ currentTimestampIndex + 1 }} / {{ uniqueTimestamps?.length || 0 }}</span>
+          <span
+            >Progreso: {{ currentTimestampIndex + 1 }} /
+            {{ uniqueTimestamps?.length || 0 }}</span
+          >
           <span class="time-range" v-if="uniqueTimestamps?.length > 0">
-            {{ formatTimestamp(uniqueTimestamps[0], true) }} → {{ formatTimestamp(uniqueTimestamps[uniqueTimestamps.length - 1], true) }}
+            {{ formatTimestamp(uniqueTimestamps[0], true) }} →
+            {{
+              formatTimestamp(
+                uniqueTimestamps[uniqueTimestamps.length - 1],
+                true
+              )
+            }}
           </span>
         </div>
         <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            :style="{ width: `${(uniqueTimestamps?.length || 0) > 0 ? ((currentTimestampIndex + 1) / (uniqueTimestamps?.length || 1)) * 100 : 0}%` }"
+          <div
+            class="progress-fill"
+            :style="{
+              width: `${
+                (uniqueTimestamps?.length || 0) > 0
+                  ? ((currentTimestampIndex + 1) /
+                      (uniqueTimestamps?.length || 1)) *
+                    100
+                  : 0
+              }%`,
+            }"
           ></div>
         </div>
       </div>
@@ -56,7 +66,9 @@
           <div class="stat-label">Personas Detectadas</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ deteccionesData?.total_encontradas || 0 }}</div>
+          <div class="stat-value">
+            {{ deteccionesData?.total_encontradas || 0 }}
+          </div>
           <div class="stat-label">Total Detecciones</div>
         </div>
         <div class="stat-card">
@@ -64,57 +76,61 @@
           <div class="stat-label">Coordenadas</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ formatTimestamp(selectedTimestamp, true) }}</div>
+          <div class="stat-value">
+            {{ formatTimestamp(selectedTimestamp, true) }}
+          </div>
           <div class="stat-label">Momento Actual</div>
         </div>
       </div>
 
       <!-- Control Buttons -->
       <div class="controls-buttons">
-        <button 
-          @click="play" 
+        <button
+          @click="play"
           :disabled="loading || (uniqueTimestamps?.length || 0) === 0"
           class="btn btn-primary"
         >
           {{ autoPlay ? '⏸️ Pausar' : '▶️ Reproducir' }}
         </button>
-        <button 
-          @click="goToFirst" 
+        <button
+          @click="goToFirst"
           :disabled="loading || currentTimestampIndex <= 0"
           class="btn btn-secondary"
         >
           ⏮️⏮️ Principio
         </button>
-        <button 
-          @click="previousTimestamp" 
+        <button
+          @click="previousTimestamp"
           :disabled="loading || currentTimestampIndex <= 0"
           class="btn btn-secondary"
         >
           ⏮️ Anterior
         </button>
-        <button 
-          @click="nextTimestamp" 
-          :disabled="loading || currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1"
+        <button
+          @click="nextTimestamp"
+          :disabled="
+            loading ||
+            currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1
+          "
           class="btn btn-secondary"
         >
           ⏭️ Siguiente
         </button>
-        <button 
-          @click="goToLast" 
-          :disabled="loading || currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1"
+        <button
+          @click="goToLast"
+          :disabled="
+            loading ||
+            currentTimestampIndex >= (uniqueTimestamps?.length || 1) - 1
+          "
           class="btn btn-secondary"
         >
           ⏭️⏭️ Final
         </button>
-        <button 
-          @click="reset" 
-          :disabled="loading"
-          class="btn btn-secondary"
-        >
+        <button @click="reset" :disabled="loading" class="btn btn-secondary">
           🔄 Reiniciar
         </button>
-        <button 
-          @click="loadTimestamps" 
+        <button
+          @click="loadTimestamps"
           :disabled="loading"
           class="btn btn-primary"
         >
@@ -126,21 +142,21 @@
       <div class="advanced-controls">
         <div class="control-item">
           <label>Velocidad:</label>
-          <select 
-            v-model="playbackSpeed" 
+          <select
+            v-model="playbackSpeed"
             @change="updatePlaybackSpeed"
             class="speed-select"
           >
-            <option 
-              v-for="speed in CONFIG.INTERVALS.PLAYBACK_SPEEDS" 
-              :key="speed.value" 
+            <option
+              v-for="speed in CONFIG.INTERVALS.PLAYBACK_SPEEDS"
+              :key="speed.value"
               :value="speed.value"
             >
               {{ speed.label }}
             </option>
           </select>
         </div>
-        
+
         <div class="control-item">
           <button
             @click="togglePersistence"
@@ -149,12 +165,9 @@
             {{ persistData ? '🔒 Datos Fijos' : '🔓 Datos Dinámicos' }}
           </button>
         </div>
-        
+
         <div class="control-item">
-          <button
-            @click="clearCanvas"
-            class="btn btn-danger"
-          >
+          <button @click="clearCanvas" class="btn btn-danger">
             🧹 Limpiar Canvas
           </button>
         </div>
@@ -175,13 +188,13 @@
     <!-- Visualization -->
     <div v-if="!loading && !error" class="visualization">
       <div class="heatmap-canvas-container">
-        <canvas 
-          ref="heatmapCanvas" 
-          :width="canvasWidth" 
+        <canvas
+          ref="heatmapCanvas"
+          :width="canvasWidth"
           :height="canvasHeight"
           class="heatmap-canvas"
         ></canvas>
-        
+
         <!-- Legend -->
         <div class="legend">
           <h4>Leyenda</h4>
@@ -206,10 +219,17 @@
     </div>
 
     <!-- No Data State -->
-    <div v-if="!loading && !error && (!deteccionesData || !deteccionesData.success)" class="no-data">
+    <div
+      v-if="
+        !loading && !error && (!deteccionesData || !deteccionesData.success)
+      "
+      class="no-data"
+    >
       <div class="no-data-icon">📊</div>
       <h3>No hay detecciones para mostrar</h3>
-      <p>Selecciona un timestamp o carga datos para visualizar el mapa de calor</p>
+      <p>
+        Selecciona un timestamp o carga datos para visualizar el mapa de calor
+      </p>
       <button @click="loadTimestamps" class="btn btn-primary">
         Cargar Datos
       </button>
@@ -219,7 +239,11 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
-import { CONFIG, getDeteccionesService, getDataSourceInfo } from '@/config/deteccionesConfig.js';
+import {
+  CONFIG,
+  getDeteccionesService,
+  getDataSourceInfo,
+} from '@/config/deteccionesConfig.js';
 
 // Servicio de detecciones (se cargará dinámicamente)
 let deteccionesService = null;
@@ -252,7 +276,11 @@ let autoPlayInterval = null;
 // Computed properties con protecciones
 const totalPersonas = computed(() => {
   try {
-    if (!deteccionesData.value?.detecciones || !Array.isArray(deteccionesData.value.detecciones)) return 0;
+    if (
+      !deteccionesData.value?.detecciones ||
+      !Array.isArray(deteccionesData.value.detecciones)
+    )
+      return 0;
     return deteccionesData.value.detecciones.reduce((sum, det) => {
       return sum + (det?.personas || 0);
     }, 0);
@@ -264,7 +292,11 @@ const totalPersonas = computed(() => {
 
 const totalCoordenadas = computed(() => {
   try {
-    if (!deteccionesData.value?.detecciones || !Array.isArray(deteccionesData.value.detecciones)) return 0;
+    if (
+      !deteccionesData.value?.detecciones ||
+      !Array.isArray(deteccionesData.value.detecciones)
+    )
+      return 0;
     return deteccionesData.value.detecciones.reduce((sum, det) => {
       return sum + (det?.coordenadas?.length || 0);
     }, 0);
@@ -291,7 +323,7 @@ const reset = async () => {
     if (autoPlay.value) {
       toggleAutoPlay();
     }
-    
+
     // Ir al primer timestamp (principio cronológico)
     currentTimestampIndex.value = 0;
     if (uniqueTimestamps.value.length > 0) {
@@ -319,7 +351,8 @@ const goToLast = async () => {
   try {
     currentTimestampIndex.value = uniqueTimestamps.value.length - 1;
     if (uniqueTimestamps.value.length > 0) {
-      selectedTimestamp.value = uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
+      selectedTimestamp.value =
+        uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
       await loadDetecciones();
     }
   } catch (err) {
@@ -333,18 +366,21 @@ const loadTimestamps = async () => {
     error.value = 'Servicio no disponible';
     return;
   }
-  
+
   try {
     loading.value = true;
     error.value = null;
-    
+
     const timestamps = await deteccionesService.getTimestampsUnicos();
     uniqueTimestamps.value = timestamps;
-    
+
     console.log('📅 Timestamps cargados:', timestamps.length);
     console.log('📅 Primer timestamp (más antiguo):', timestamps[0]);
-    console.log('📅 Último timestamp (más reciente):', timestamps[timestamps.length - 1]);
-    
+    console.log(
+      '📅 Último timestamp (más reciente):',
+      timestamps[timestamps.length - 1]
+    );
+
     // Si no hay timestamp seleccionado, usar el primer timestamp cronológico (más antiguo)
     if (!selectedTimestamp.value && timestamps.length > 0) {
       currentTimestampIndex.value = 0;
@@ -352,7 +388,9 @@ const loadTimestamps = async () => {
       await loadDetecciones();
     } else if (selectedTimestamp.value && timestamps.length > 0) {
       // Mantener la selección actual si existe
-      const currentIndex = timestamps.findIndex(t => t === selectedTimestamp.value);
+      const currentIndex = timestamps.findIndex(
+        (t) => t === selectedTimestamp.value
+      );
       currentTimestampIndex.value = currentIndex >= 0 ? currentIndex : 0;
     }
   } catch (err) {
@@ -365,33 +403,41 @@ const loadTimestamps = async () => {
 
 const loadDetecciones = async () => {
   if (!selectedTimestamp.value) return;
-  
+
   if (!deteccionesService) {
     console.error('❌ Servicio de detecciones no inicializado');
     error.value = 'Servicio no disponible';
     return;
   }
-  
+
   try {
     loading.value = true;
     error.value = null;
-    
-    console.log('🔍 Cargando detecciones para timestamp:', selectedTimestamp.value);
-    const data = await deteccionesService.fetchDeteccionesPorTimestamp(selectedTimestamp.value);
+
+    console.log(
+      '🔍 Cargando detecciones para timestamp:',
+      selectedTimestamp.value
+    );
+    const data = await deteccionesService.fetchDeteccionesPorTimestamp(
+      selectedTimestamp.value
+    );
     console.log('📊 Datos recibidos:', data);
-    
+
     // Solo actualizar si no está en modo persistencia o si es la primera vez
     if (!persistData.value || !deteccionesData.value) {
       deteccionesData.value = data;
       lastDrawnData.value = data;
     }
-    
+
     // Validar estructura de datos
     if (data && data.detecciones) {
-      const totalCoords = data.detecciones.reduce((sum, det) => sum + (det.coordenadas?.length || 0), 0);
+      const totalCoords = data.detecciones.reduce(
+        (sum, det) => sum + (det.coordenadas?.length || 0),
+        0
+      );
       console.log(`📍 Total de coordenadas encontradas: ${totalCoords}`);
     }
-    
+
     nextTick(() => {
       drawHeatmap();
     });
@@ -407,7 +453,8 @@ const useLatestTimestamp = async () => {
   if (uniqueTimestamps.value.length > 0) {
     // Ahora que están ordenados cronológicamente, el último índice es el más reciente
     currentTimestampIndex.value = uniqueTimestamps.value.length - 1;
-    selectedTimestamp.value = uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
+    selectedTimestamp.value =
+      uniqueTimestamps.value[uniqueTimestamps.value.length - 1];
     await loadDetecciones();
   }
 };
@@ -415,7 +462,8 @@ const useLatestTimestamp = async () => {
 // Funciones de navegación del slider
 const onSliderChange = async () => {
   if (uniqueTimestamps.value.length > 0 && currentTimestampIndex.value >= 0) {
-    selectedTimestamp.value = uniqueTimestamps.value[currentTimestampIndex.value];
+    selectedTimestamp.value =
+      uniqueTimestamps.value[currentTimestampIndex.value];
     await loadDetecciones();
   }
 };
@@ -423,7 +471,8 @@ const onSliderChange = async () => {
 const previousTimestamp = async () => {
   if (currentTimestampIndex.value > 0) {
     currentTimestampIndex.value--;
-    selectedTimestamp.value = uniqueTimestamps.value[currentTimestampIndex.value];
+    selectedTimestamp.value =
+      uniqueTimestamps.value[currentTimestampIndex.value];
     await loadDetecciones();
   }
 };
@@ -431,7 +480,8 @@ const previousTimestamp = async () => {
 const nextTimestamp = async () => {
   if (currentTimestampIndex.value < uniqueTimestamps.value.length - 1) {
     currentTimestampIndex.value++;
-    selectedTimestamp.value = uniqueTimestamps.value[currentTimestampIndex.value];
+    selectedTimestamp.value =
+      uniqueTimestamps.value[currentTimestampIndex.value];
     await loadDetecciones();
   }
 };
@@ -441,15 +491,18 @@ const drawHeatmap = () => {
     console.log('⚠️ No hay canvas disponible');
     return;
   }
-  
+
   // Usar datos persistidos si está activado el modo persistencia
-  const dataToUse = persistData.value && lastDrawnData.value ? lastDrawnData.value : deteccionesData.value;
-  
+  const dataToUse =
+    persistData.value && lastDrawnData.value
+      ? lastDrawnData.value
+      : deteccionesData.value;
+
   if (!dataToUse?.detecciones) {
     console.log('⚠️ No hay datos para dibujar');
     console.log('Datos disponibles:', dataToUse);
     console.log('Modo persistencia:', persistData.value);
-    
+
     // Dibujar canvas vacío
     const canvas = heatmapCanvas.value;
     const ctx = canvas.getContext('2d');
@@ -457,90 +510,101 @@ const drawHeatmap = () => {
     ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     drawGrid(ctx);
-    
+
     ctx.fillStyle = '#6b7280';
     ctx.font = '16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('No hay coordenadas para mostrar', canvasWidth / 2, canvasHeight / 2);
+    ctx.fillText(
+      'No hay coordenadas para mostrar',
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
     return;
   }
-  
+
   const canvas = heatmapCanvas.value;
   const ctx = canvas.getContext('2d');
-  
+
   // Limpiar canvas solo si no está en modo persistencia
   if (!persistData.value) {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    
+
     // Dibujar fondo
     ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    
+
     // Dibujar grilla
     drawGrid(ctx);
   }
-  
+
   // Obtener todas las coordenadas
   const allCoordinates = [];
   console.log('🔍 Estructura de detecciones:', dataToUse.detecciones);
-  
+
   dataToUse.detecciones.forEach((deteccion, index) => {
     console.log(`🔍 Detección ${index}:`, deteccion);
     if (deteccion.coordenadas && Array.isArray(deteccion.coordenadas)) {
-      console.log(`📌 Procesando ${deteccion.coordenadas.length} coordenadas de detección ID: ${deteccion.id}`);
-      console.log('📍 Coordenadas:', deteccion.coordenadas);
-      
-      // Validar que las coordenadas tengan el formato correcto
-      const validCoordinates = deteccion.coordenadas.filter(coord => 
-        coord && typeof coord.x === 'number' && typeof coord.y === 'number'
+      console.log(
+        `📌 Procesando ${deteccion.coordenadas.length} coordenadas de detección ID: ${deteccion.id}`
       );
-      console.log(`✅ Coordenadas válidas: ${validCoordinates.length}/${deteccion.coordenadas.length}`);
-      
+      console.log('📍 Coordenadas:', deteccion.coordenadas);
+
+      // Validar que las coordenadas tengan el formato correcto
+      const validCoordinates = deteccion.coordenadas.filter(
+        (coord) =>
+          coord && typeof coord.x === 'number' && typeof coord.y === 'number'
+      );
+      console.log(
+        `✅ Coordenadas válidas: ${validCoordinates.length}/${deteccion.coordenadas.length}`
+      );
+
       allCoordinates.push(...validCoordinates);
     } else {
       console.warn('⚠️ Detección sin coordenadas válidas:', deteccion);
     }
   });
-  
-  console.log(`🗺️ Total coordenadas para mapa de calor: ${allCoordinates.length}`);
+
+  console.log(
+    `🗺️ Total coordenadas para mapa de calor: ${allCoordinates.length}`
+  );
   console.log('📍 Todas las coordenadas:', allCoordinates);
-  
+
   if (allCoordinates.length === 0) {
     console.log('⚠️ No hay coordenadas para dibujar');
     return;
   }
-  
+
   // Log de algunas coordenadas para debug
   console.log('📍 Primeras 3 coordenadas:', allCoordinates.slice(0, 3));
-  
+
   // Normalizar coordenadas para que quepan en el canvas
-  const maxX = Math.max(...allCoordinates.map(c => c.x));
-  const maxY = Math.max(...allCoordinates.map(c => c.y));
-  const minX = Math.min(...allCoordinates.map(c => c.x));
-  const minY = Math.min(...allCoordinates.map(c => c.y));
-  
+  const maxX = Math.max(...allCoordinates.map((c) => c.x));
+  const maxY = Math.max(...allCoordinates.map((c) => c.y));
+  const minX = Math.min(...allCoordinates.map((c) => c.x));
+  const minY = Math.min(...allCoordinates.map((c) => c.y));
+
   console.log(`📏 Rango X: ${minX} - ${maxX}, Rango Y: ${minY} - ${maxY}`);
-  
+
   const scaleX = (canvasWidth - 100) / (maxX - minX || 1);
   const scaleY = (canvasHeight - 100) / (maxY - minY || 1);
-  
+
   console.log(`📐 Escalas - X: ${scaleX.toFixed(2)}, Y: ${scaleY.toFixed(2)}`);
-  
+
   // Crear mapa de densidad
   const density = createDensityMap(allCoordinates, scaleX, scaleY, minX, minY);
   console.log(`🔥 Puntos de densidad creados: ${density.length}`);
-  
+
   // Dibujar mapa de calor
   drawHeatmapPoints(ctx, density);
-  
+
   // Dibujar puntos individuales
   drawPoints(ctx, allCoordinates, scaleX, scaleY, minX, minY);
-  
+
   // Guardar datos dibujados si no está en modo persistencia
   if (!persistData.value) {
     lastDrawnData.value = dataToUse;
   }
-  
+
   console.log('✅ Mapa de calor dibujado exitosamente');
   console.log('🔒 Modo persistencia:', persistData.value);
 };
@@ -548,28 +612,28 @@ const drawHeatmap = () => {
 const createDensityMap = (coordinates, scaleX, scaleY, minX, minY) => {
   const gridSize = CONFIG.CANVAS.GRID_SIZE;
   const density = [];
-  
+
   for (let x = 0; x < canvasWidth; x += gridSize) {
     for (let y = 0; y < canvasHeight; y += gridSize) {
       let count = 0;
       const radius = CONFIG.CANVAS.HEATMAP_RADIUS;
-      
-      coordinates.forEach(coord => {
+
+      coordinates.forEach((coord) => {
         const pixelX = (coord.x - minX) * scaleX + 50;
         const pixelY = (coord.y - minY) * scaleY + 50;
-        
+
         const distance = Math.sqrt((x - pixelX) ** 2 + (y - pixelY) ** 2);
         if (distance < radius) {
           count += Math.max(0, 1 - distance / radius);
         }
       });
-      
+
       if (count > 0) {
         density.push({ x, y, intensity: count });
       }
     }
   }
-  
+
   return density;
 };
 
@@ -578,14 +642,14 @@ const drawHeatmapPoints = (ctx, density) => {
     console.log('⚠️ No hay densidad para dibujar');
     return;
   }
-  
+
   console.log(`🔥 Dibujando ${density.length} puntos de densidad`);
-  const maxIntensity = Math.max(...density.map(d => d.intensity));
+  const maxIntensity = Math.max(...density.map((d) => d.intensity));
   console.log(`🔥 Intensidad máxima: ${maxIntensity}`);
-  
+
   density.forEach((point, index) => {
     const alpha = Math.min(point.intensity / maxIntensity, 1);
-    
+
     // Gradiente de colores más visible: azul -> verde -> amarillo -> rojo
     let red, green, blue;
     if (alpha < 0.33) {
@@ -604,36 +668,47 @@ const drawHeatmapPoints = (ctx, density) => {
       green = Math.floor(255 * (1 - (alpha - 0.66) / 0.34));
       blue = 0;
     }
-    
-    ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${Math.max(alpha * 0.8, 0.3)})`;
+
+    ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${Math.max(
+      alpha * 0.8,
+      0.3
+    )})`;
     ctx.beginPath();
     ctx.arc(point.x, point.y, 20 + alpha * 10, 0, 2 * Math.PI);
     ctx.fill();
-    
+
     if (index < 5) {
-      console.log(`Punto densidad ${index}: (${point.x}, ${point.y}) intensidad: ${point.intensity.toFixed(2)} alpha: ${alpha.toFixed(2)}`);
+      console.log(
+        `Punto densidad ${index}: (${point.x}, ${
+          point.y
+        }) intensidad: ${point.intensity.toFixed(2)} alpha: ${alpha.toFixed(2)}`
+      );
     }
   });
-  
+
   console.log('✅ Mapa de calor dibujado exitosamente');
 };
 
 const drawPoints = (ctx, coordinates, scaleX, scaleY, minX, minY) => {
   console.log(`🎨 Dibujando ${coordinates.length} puntos individuales`);
-  
+
   coordinates.forEach((coord, index) => {
     const x = (coord.x - minX) * scaleX + 50;
     const y = (coord.y - minY) * scaleY + 50;
-    
-    console.log(`Punto ${index}: (${coord.x}, ${coord.y}) -> canvas (${x.toFixed(1)}, ${y.toFixed(1)})`);
-    
+
+    console.log(
+      `Punto ${index}: (${coord.x}, ${coord.y}) -> canvas (${x.toFixed(
+        1
+      )}, ${y.toFixed(1)})`
+    );
+
     // Efecto de pulsación - círculo exterior
     ctx.beginPath();
     ctx.arc(x, y, 15, 0, 2 * Math.PI);
     ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
     ctx.lineWidth = 2;
     ctx.stroke();
-    
+
     // Círculo principal de la persona
     ctx.beginPath();
     ctx.arc(x, y, 8, 0, 2 * Math.PI);
@@ -642,46 +717,56 @@ const drawPoints = (ctx, coordinates, scaleX, scaleY, minX, minY) => {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
     ctx.stroke();
-    
+
     // Número de persona en el centro
     ctx.fillStyle = 'white';
     ctx.font = 'bold 10px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText((index + 1).toString(), x, y);
-    
+
     // Información de coordenadas cada 3 puntos
     if (index % 3 === 0) {
       ctx.fillStyle = CONFIG.COLORS.TEXT;
       ctx.font = 'bold 10px Arial';
       ctx.strokeStyle = CONFIG.COLORS.POINT_BORDER;
       ctx.lineWidth = 2;
-      ctx.strokeText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 12, y - 12);
-      ctx.fillText(`(${Math.round(coord.x)}, ${Math.round(coord.y)})`, x + 12, y - 12);
+      ctx.strokeText(
+        `(${Math.round(coord.x)}, ${Math.round(coord.y)})`,
+        x + 12,
+        y - 12
+      );
+      ctx.fillText(
+        `(${Math.round(coord.x)}, ${Math.round(coord.y)})`,
+        x + 12,
+        y - 12
+      );
     }
   });
-  
+
   // Dibujar información de la detección en la esquina
   if (coordinates.length > 0) {
-    const info = `${coordinates.length} persona${coordinates.length !== 1 ? 's' : ''} detectada${coordinates.length !== 1 ? 's' : ''}`;
-    
+    const info = `${coordinates.length} persona${
+      coordinates.length !== 1 ? 's' : ''
+    } detectada${coordinates.length !== 1 ? 's' : ''}`;
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.fillRect(10, 10, 280, 35);
-    
+
     ctx.fillStyle = 'white';
     ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText(info, 20, 27);
   }
-  
+
   console.log('✅ Puntos dibujados exitosamente');
 };
 
 const drawGrid = (ctx) => {
   ctx.strokeStyle = CONFIG.COLORS.GRID;
   ctx.lineWidth = 1;
-  
+
   // Líneas verticales
   for (let x = 50; x < canvasWidth; x += 50) {
     ctx.beginPath();
@@ -689,7 +774,7 @@ const drawGrid = (ctx) => {
     ctx.lineTo(x, canvasHeight - 50);
     ctx.stroke();
   }
-  
+
   // Líneas horizontales
   for (let y = 50; y < canvasHeight; y += 50) {
     ctx.beginPath();
@@ -701,7 +786,7 @@ const drawGrid = (ctx) => {
 
 const formatTimestamp = (timestamp, short = false) => {
   if (!timestamp) return '';
-  
+
   const date = new Date(timestamp);
   if (short) {
     return date.toLocaleTimeString('es-ES');
@@ -712,7 +797,7 @@ const formatTimestamp = (timestamp, short = false) => {
 const toggleAutoRefresh = () => {
   try {
     autoRefresh.value = !autoRefresh.value;
-    
+
     if (autoRefresh.value) {
       autoRefreshInterval = setInterval(async () => {
         try {
@@ -735,7 +820,7 @@ const toggleAutoRefresh = () => {
 const toggleAutoPlay = () => {
   try {
     autoPlay.value = !autoPlay.value;
-    
+
     if (autoPlay.value) {
       autoPlayInterval = setInterval(async () => {
         try {
@@ -767,7 +852,7 @@ const toggleAutoPlay = () => {
 const togglePersistence = () => {
   try {
     persistData.value = !persistData.value;
-    
+
     if (!persistData.value) {
       // Si se desactiva la persistencia, redibujar con los datos actuales
       nextTick(() => {
@@ -791,7 +876,7 @@ const updatePlaybackSpeed = () => {
         clearInterval(autoPlayInterval);
         autoPlayInterval = null;
       }
-      
+
       autoPlayInterval = setInterval(async () => {
         try {
           if (currentTimestampIndex.value < uniqueTimestamps.value.length - 1) {
@@ -818,19 +903,23 @@ const clearCanvas = () => {
     const canvas = heatmapCanvas.value;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    
+
     // Dibujar fondo y grilla
     ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     drawGrid(ctx);
-    
+
     // Mensaje de canvas limpio
     ctx.fillStyle = '#6b7280';
     ctx.font = '16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Canvas limpiado - Selecciona un timestamp para ver datos', canvasWidth / 2, canvasHeight / 2);
+    ctx.fillText(
+      'Canvas limpiado - Selecciona un timestamp para ver datos',
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
   }
-  
+
   // Limpiar datos si no está en modo persistencia
   if (!persistData.value) {
     deteccionesData.value = null;
@@ -866,24 +955,24 @@ const getStatusText = () => {
 const validateComponent = () => {
   try {
     const validationErrors = [];
-    
+
     if (!uniqueTimestamps || !Array.isArray(uniqueTimestamps.value)) {
       validationErrors.push('uniqueTimestamps no es válido');
     }
-    
+
     if (currentTimestampIndex.value < -1) {
       validationErrors.push('currentTimestampIndex inválido');
     }
-    
+
     if (playbackSpeed.value <= 0) {
       validationErrors.push('playbackSpeed inválido');
     }
-    
+
     if (validationErrors.length > 0) {
       console.warn('⚠️ Errores de validación:', validationErrors);
       return false;
     }
-    
+
     return true;
   } catch (err) {
     console.error('Error en validateComponent:', err);
@@ -895,11 +984,11 @@ const validateComponent = () => {
 onMounted(async () => {
   try {
     console.log('🚀 Componente DeteccionesHeatmap montado');
-    
+
     // Cargar el servicio de detecciones dinámicamente
     deteccionesService = await getDeteccionesService();
     console.log('📡 Servicio de detecciones cargado:', dataSourceInfo);
-    
+
     await loadTimestamps();
   } catch (err) {
     console.error('Error en onMounted:', err);
@@ -910,17 +999,17 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   try {
     console.log('🧹 Limpiando intervalos en DeteccionesHeatmap');
-    
+
     if (autoRefreshInterval) {
       clearInterval(autoRefreshInterval);
       autoRefreshInterval = null;
     }
-    
+
     if (autoPlayInterval) {
       clearInterval(autoPlayInterval);
       autoPlayInterval = null;
     }
-    
+
     console.log('✅ Limpieza completada');
   } catch (err) {
     console.error('Error en onBeforeUnmount:', err);
@@ -1270,8 +1359,12 @@ onBeforeUnmount(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading p {
@@ -1397,72 +1490,72 @@ onBeforeUnmount(() => {
   .heatmap-container {
     padding: 10px;
   }
-  
+
   .header {
     padding: 20px;
   }
-  
+
   .header h1 {
     font-size: 2em;
   }
-  
+
   .controls {
     padding: 20px;
   }
-  
+
   .control-group {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .control-group label {
     min-width: auto;
   }
-  
+
   .slider-container {
     min-width: auto;
   }
-  
+
   .time-display {
     min-width: auto;
   }
-  
+
   .stats {
     flex-direction: column;
   }
-  
+
   .stat-card {
     min-width: auto;
   }
-  
+
   .controls-buttons {
     flex-direction: column;
   }
-  
+
   .advanced-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .control-item {
     justify-content: space-between;
   }
-  
+
   .visualization {
     padding: 20px;
   }
-  
+
   .heatmap-canvas-container {
     height: 400px;
   }
-  
+
   .legend {
     position: relative;
     top: auto;
     right: auto;
     margin-top: 20px;
   }
-  
+
   .data-source-badge {
     position: relative;
     top: auto;
@@ -1487,8 +1580,16 @@ onBeforeUnmount(() => {
   animation: fadeInUp 0.5s ease;
 }
 
-.stat-card:nth-child(1) { animation-delay: 0.1s; }
-.stat-card:nth-child(2) { animation-delay: 0.2s; }
-.stat-card:nth-child(3) { animation-delay: 0.3s; }
-.stat-card:nth-child(4) { animation-delay: 0.4s; }
+.stat-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.stat-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.stat-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.stat-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
 </style>
