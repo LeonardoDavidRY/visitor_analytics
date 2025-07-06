@@ -114,11 +114,6 @@
         <!-- Gráfico de horas -->
         <SimpleHourChart />
       </div>
-
-      <!-- Tabla cruzada 
-      <div class="mt-8">
-        <SimpleCrossTableChart />
-      </div>-->
     </div>
   </div>
 </template>
@@ -131,8 +126,6 @@ import SimpleAgeChart from '@/components/charts/SimpleAgeChart.vue';
 import SimpleTypeChart from '@/components/charts/SimpleTypeChart.vue';
 import SimpleHourChart from '@/components/charts/SimpleHourChart.vue';
 import SimpleGenderChart from '@/components/charts/SimpleGenderChart.vue';
-import SimpleCrossTableChart from '@/components/charts/SimpleCrossTableChart.vue';
-import PersonCountChart from '@/components/charts/PersonCountChart.vue';
 
 const loading = ref(false);
 const error = ref(null);

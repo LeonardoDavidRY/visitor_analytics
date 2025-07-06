@@ -1,10 +1,5 @@
 <template>
   <div class="space-y-6">
-    <!-- Componente de presentación del proyecto -->
-    <div class="mb-8">
-      <HelloWorld msg="Proyecto de Análisis de Visitantes" />
-    </div>
-
     <!-- Header -->
     <div class="text-center">
       <h1 class="text-4xl font-bold text-gray-900 mb-2">🏛️ Visitor Analytics</h1>
@@ -222,7 +217,6 @@
 import { ref, onMounted } from 'vue';
 import apiService from '@/services/apiService.js';
 import deteccionesService from '@/services/deteccionesService.js';
-import HelloWorld from '@/components/HelloWorld.vue';
 
 // Estado reactivo
 const apiStatus = ref({

@@ -1,77 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import Dashboard from '../views/Dashboard.vue';
-import TimelineView from '../views/TimelineView.vue';
-import HeatmapView from '../views/HeatmapView.vue';
-import CameraMonitorView from '@/views/CameraMonitorView.vue';
-import AgeBarView from '@/views/AgeBarView.vue';
 import TypePieChart from '@/components/charts/TypePieChart.vue';
 import ApiDashboard from '@/views/ApiDashboard.vue';
-// Componentes antiguos (GPS/Leaflet) - mantenidos para compatibilidad
-import LibraryMap from '@/components/charts/LibraryMap.vue';
-import PersonRoutesView from '@/views/PersonRoutesView.vue';
-// Nuevos componentes cartesianos
-import CartesianRoutesView from '@/views/CartesianRoutesView.vue';
-import CartesianHeatmapView from '@/views/CartesianHeatmapView.vue';
+
 
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/SystemStatus.vue'),
+    component: () => import('../components/HelloWorld.vue'),
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: Dashboard,
-  },
-  {
-    path: '/timeline',
-    name: 'timeline',
-    component: TimelineView,
-  },
-  {
-    path: '/agebar',
-    name: 'agebar',
-    component: AgeBarView,
+    component: () => import('../views/SystemStatus.vue'),
   },
   {
     path: '/typepie',
     name: 'typepie',
     component: TypePieChart,
   },
-  // Componentes antiguos (GPS/Leaflet) - deshabilitados del menú principal
-  // {
-  //   path: '/librarymap',
-  //   name: 'librarymap',
-  //   component: LibraryMap,
-  // },
   {
-    path: '/heatmap',
-    name: 'heatmap',
-    component: HeatmapView,
-  },
-  // {
-  //   path: '/personroutes',
-  //   name: 'personroutes',
-  //   component: PersonRoutesView,
-  // },
-  // Nuevos componentes cartesianos
-  {
-    path: '/cartesian-routes',
-    name: 'cartesian-routes',
-    component: CartesianRoutesView,
+    path: '/simple-type',
+    name: 'simple-type',
+    component: () => import('../components/charts/SimpleTypeChart.vue'),
   },
   {
-    path: '/cartesian-heatmap',
-    name: 'cartesian-heatmap',
-    component: CartesianHeatmapView,
+    path: '/simple-age',
+    name: 'simple-age',
+    component: () => import('../components/charts/SimpleAgeChart.vue'),
   },
   {
-    path: '/cameramonitor',
-    name: 'cameramonitor',
-    component: CameraMonitorView,
+    path: '/simple-gender',
+    name: 'simple-gender',
+    component: () => import('../components/charts/SimpleGenderChart.vue'),
+  },
+  {
+    path: '/simple-hour',
+    name: 'simple-hour',
+    component: () => import('../components/charts/SimpleHourChart.vue'),
   },
   {
     path: '/api-dashboard',
@@ -94,22 +61,6 @@ const routes = [
     component: () => import('../views/DeteccionesHeatmapView.vue'),
   },
  
-  // Rutas legacy (accesibles directamente pero no en menú)
-  {
-    path: '/legacy/librarymap',
-    name: 'legacy-librarymap',
-    component: LibraryMap,
-  },
-  {
-    path: '/legacy/personroutes',
-    name: 'legacy-personroutes',
-    component: PersonRoutesView,
-  },
-  {
-    path: '/legacy/heatmap',
-    name: 'legacy-heatmap',
-    component: HeatmapView,
-  },
   {
     path: '/about',
     name: 'about',

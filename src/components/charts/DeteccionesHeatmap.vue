@@ -1,6 +1,6 @@
 <template>
   <div class="heatmap-container">
-    <!-- Header -->
+    <!-- Header 
     <div class="header">
       <h1>🔥 Mapa de Calor - Detección de Personas</h1>
       <p>Visualización en tiempo real de la actividad detectada</p>
@@ -9,7 +9,7 @@
           {{ dataSourceInfo.isMock ? '📊 DATOS MOCK' : '🌐 API REAL' }}
         </span>
       </div>
-    </div>
+    </div>-->
 
     <!-- Controls -->
     <div class="controls">

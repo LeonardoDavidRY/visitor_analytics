@@ -27,29 +27,33 @@
           <div class="flex items-center justify-between">
             <span class="text-xs text-gray-600">API Principal</span>
             <div class="flex items-center space-x-1">
-              <div 
+              <div
                 :class="[
                   'w-2 h-2 rounded-full',
-                  apiStatus.main ? 'bg-green-500' : 'bg-red-500'
+                  apiStatus.main ? 'bg-green-500' : 'bg-red-500',
                 ]"
               ></div>
-              <span class="text-xs">{{ apiStatus.main ? 'Online' : 'Offline' }}</span>
+              <span class="text-xs">{{
+                apiStatus.main ? 'Online' : 'Offline'
+              }}</span>
             </div>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xs text-gray-600">API Detecciones</span>
             <div class="flex items-center space-x-1">
-              <div 
+              <div
                 :class="[
                   'w-2 h-2 rounded-full',
-                  apiStatus.detecciones ? 'bg-green-500' : 'bg-red-500'
+                  apiStatus.detecciones ? 'bg-green-500' : 'bg-red-500',
                 ]"
               ></div>
-              <span class="text-xs">{{ apiStatus.detecciones ? 'Online' : 'Offline' }}</span>
+              <span class="text-xs">{{
+                apiStatus.detecciones ? 'Online' : 'Offline'
+              }}</span>
             </div>
           </div>
         </div>
-        <button 
+        <button
           @click="checkApiStatus"
           :disabled="checkingStatus"
           class="w-full mt-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 disabled:opacity-50"
@@ -62,7 +66,11 @@
       <nav class="flex flex-col w-full space-y-4">
         <!-- Dashboards principales -->
         <div>
-          <h4 class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">📊 Dashboards</h4>
+          <h4
+            class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide"
+          >
+            📊 Dashboards
+          </h4>
           <div class="space-y-1">
             <router-link
               v-for="link in dashboardLinks"
@@ -74,10 +82,10 @@
             >
               <span>{{ link.label }}</span>
               <span v-if="link.api" class="text-xs">
-                <div 
+                <div
                   :class="[
                     'w-2 h-2 rounded-full inline-block',
-                    getApiStatusColor(link.api)
+                    getApiStatusColor(link.api),
                   ]"
                 ></div>
               </span>
@@ -87,7 +95,11 @@
 
         <!-- Gráficas individuales -->
         <div>
-          <h4 class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">📈 Gráficas</h4>
+          <h4
+            class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide"
+          >
+            📈 Gráficas del Formulario
+          </h4>
           <div class="space-y-1">
             <router-link
               v-for="link in chartLinks"
@@ -99,10 +111,10 @@
             >
               <span>{{ link.label }}</span>
               <span v-if="link.api" class="text-xs">
-                <div 
+                <div
                   :class="[
                     'w-2 h-2 rounded-full inline-block',
-                    getApiStatusColor(link.api)
+                    getApiStatusColor(link.api),
                   ]"
                 ></div>
               </span>
@@ -112,7 +124,11 @@
 
         <!-- Detecciones y visualizaciones -->
         <div>
-          <h4 class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">🎯 Detecciones</h4>
+          <h4
+            class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide"
+          >
+            🎯 Detecciones de Cámaras
+          </h4>
           <div class="space-y-1">
             <router-link
               v-for="link in deteccionesLinks"
@@ -124,35 +140,10 @@
             >
               <span>{{ link.label }}</span>
               <span v-if="link.api" class="text-xs">
-                <div 
+                <div
                   :class="[
                     'w-2 h-2 rounded-full inline-block',
-                    getApiStatusColor(link.api)
-                  ]"
-                ></div>
-              </span>
-            </router-link>
-          </div>
-        </div>
-
-        <!-- Monitoreo -->
-        <div>
-          <h4 class="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">📹 Monitoreo</h4>
-          <div class="space-y-1">
-            <router-link
-              v-for="link in monitorLinks"
-              :key="link.to"
-              :to="link.to"
-              class="flex items-center justify-between px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-orange-100 hover:text-orange-700 transition group text-sm"
-              active-class="bg-orange-100 text-orange-700"
-              exact-active-class="bg-orange-100 text-orange-700"
-            >
-              <span>{{ link.label }}</span>
-              <span v-if="link.api" class="text-xs">
-                <div 
-                  :class="[
-                    'w-2 h-2 rounded-full inline-block',
-                    getApiStatusColor(link.api)
+                    getApiStatusColor(link.api),
                   ]"
                 ></div>
               </span>
@@ -176,7 +167,6 @@
       >
         <router-view v-slot="{ Component }">
           <component :is="Component" v-if="Component" />
-          <HelloWorld v-else msg="Proyecto de Análisis de Visitantes" />
         </router-view>
       </main>
       <footer class="text-center text-gray-500 py-3 text-sm bg-transparent">
@@ -191,57 +181,66 @@
 import { ref, onMounted } from 'vue';
 import apiService from '@/services/apiService.js';
 import deteccionesService from '@/services/deteccionesService.js';
-import HelloWorld from '@/components/HelloWorld.vue';
 
 // Estado reactivo
 const apiStatus = ref({
   main: false,
-  detecciones: false
+  detecciones: false,
 });
 const checkingStatus = ref(false);
 const lastCheck = ref('');
 
 // Enlaces organizados por categorías
 const dashboardLinks = [
-  { to: '/', label: 'Estado del Sistema', api: null },
+  { to: '/', label: 'Inicio', api: null },
   { to: '/dashboard', label: 'Dashboard Principal', api: null },
   { to: '/api-dashboard', label: 'Dashboard API', api: 'main' },
   { to: '/detecciones', label: 'Dashboard Detecciones', api: 'detecciones' },
 ];
 
 const chartLinks = [
-  { to: '/timeline', label: 'Timeline Actividad', api: 'main' },
-  { to: '/agebar', label: 'Distribución por Edad', api: 'main' },
-  { to: '/typepie', label: 'Tipos de Persona', api: 'main' },
+  { to: '/simple-type', label: 'Tipos Simple', api: 'main' },
+  { to: '/simple-age', label: 'Edad Simple', api: 'main' },
+  { to: '/simple-gender', label: 'Género Simple', api: 'main' },
+  { to: '/simple-hour', label: 'Horas Simple', api: 'main' },
 ];
 
 const deteccionesLinks = [
-  { to: '/detecciones-timeline', label: 'Timeline de Detecciones', api: 'detecciones' },
-  { to: '/detecciones-heatmap', label: 'Mapa de Calor - Coordenadas', api: 'detecciones' },
-];
-
-const monitorLinks = [
-  { to: '/cameramonitor', label: 'Monitor de Cámara', api: null },
+  {
+    to: '/detecciones-timeline',
+    label: 'Timeline de Detecciones',
+    api: 'detecciones',
+  },
+  {
+    to: '/detecciones-heatmap',
+    label: 'Mapa de Calor - Coordenadas',
+    api: 'detecciones',
+  },
 ];
 
 // Métodos
 const checkApiStatus = async () => {
   checkingStatus.value = true;
-  
+
   try {
     // Verificar API principal
     try {
       const mainData = await apiService.fetchData();
-      apiStatus.value.main = !!(mainData && (mainData.conteo_edad || mainData.conteo_hora));
+      apiStatus.value.main = !!(
+        mainData &&
+        (mainData.conteo_edad || mainData.conteo_hora)
+      );
     } catch (error) {
       console.warn('API Principal no disponible:', error.message);
       apiStatus.value.main = false;
     }
 
-    // Verificar API de detecciones  
+    // Verificar API de detecciones
     try {
       const deteccionesData = await deteccionesService.fetchTimestamps();
-      apiStatus.value.detecciones = !!(deteccionesData && deteccionesData.success);
+      apiStatus.value.detecciones = !!(
+        deteccionesData && deteccionesData.success
+      );
     } catch (error) {
       console.warn('API Detecciones no disponible:', error.message);
       apiStatus.value.detecciones = false;
@@ -257,7 +256,7 @@ const checkApiStatus = async () => {
 
 const getApiStatusColor = (apiType) => {
   if (!apiType) return 'bg-gray-400'; // Sin API
-  
+
   switch (apiType) {
     case 'main':
       return apiStatus.value.main ? 'bg-green-500' : 'bg-red-500';
@@ -271,7 +270,7 @@ const getApiStatusColor = (apiType) => {
 // Verificar estado al montar el componente
 onMounted(() => {
   checkApiStatus();
-  
+
   // Verificar cada 30 segundos
   setInterval(checkApiStatus, 30000);
 });

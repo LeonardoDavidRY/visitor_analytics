@@ -20,11 +20,6 @@
         <!-- Equipo de Recolección de Datos -->
        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
           <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-6 text-center h-32 flex flex-col justify-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-              </svg>
-            </div>
             <h3 class="text-xl font-bold text-white">Equipo de Recolección de Datos</h3>
           </div>
           <div class="p-6">
@@ -43,12 +38,7 @@
         <!-- Equipo de Minería de Datos -->
         <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
           <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-center h-32 flex flex-col justify-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-4">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-white">Equipo de Minería de Datos</h3>
+            <h3 class="text-xl font-bold text-white">Equipo de Minería de Datos y Ánalisis</h3>
           </div>
           <div class="p-6">
             <ul class="space-y-3">
@@ -66,12 +56,7 @@
         <!-- Equipo de Visualización de Datos -->
         <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden">
           <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-6 text-center h-32 flex flex-col justify-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-4">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-white">Visualización de Datos</h3>
+            <h3 class="text-xl font-bold text-white">Equipo de Visualización y Presentación de Resultados</h3>
           </div>
           <div class="p-6">
             <ul class="space-y-3">
@@ -139,22 +124,24 @@ export default {
   data() {
     return {
       dataCollectionTeam: [
-        'Ana García López',
-        'Carlos Mendoza',
-        'María Fernández',
-        'Luis Rodríguez'
+        'Anthony Narvaez',
+        'Anderson Ocapana',
+        'Cristian Olivares',
+        'Augusto Salazar',
+        'Pablo Simbaña',
+        'Nelson Soria'
       ],
       dataMiningTeam: [
-        'Sofia Martínez',
-        'Diego Herrera',
-        'Valentina Torres',
-        'Andrés Jiménez'
+        'Jhon Arteaga',
+        'Joel Espinoza',
+        'Anthony Tipan',
+        'Luis Valladares'
       ],
       dataVisualizationTeam: [
-        'Camila Vargas',
-        'Santiago Cruz',
-        'Isabella Morales',
-        'Felipe Castillo'
+        'Kevin Andrade',
+        'Fátima Fiallos',
+        'Leonardo Ramírez',
+        'Emil Verkade'
       ]
     };
   }
