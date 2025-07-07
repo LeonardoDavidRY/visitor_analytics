@@ -43,9 +43,9 @@ const apiConfigPath = path.join(__dirname, 'src', 'config', 'api.js');
 try {
   let apiConfig = fs.readFileSync(apiConfigPath, 'utf8');
   
-  // Buscar y reemplazar la URL directa
-  const directUrlRegex = /DIRECT_URL:\s*['"`]https:\/\/[^'"`]+['"`]/;
-  apiConfig = apiConfig.replace(directUrlRegex, `DIRECT_URL: '${newNgrokUrl}/api'`);
+  // Buscar y reemplazar la URL online
+  const onlineUrlRegex = /ONLINE_URL:\s*['"`]https:\/\/[^'"`]+['"`]/;
+  apiConfig = apiConfig.replace(onlineUrlRegex, `ONLINE_URL: '${newNgrokUrl}/api'`);
   
   fs.writeFileSync(apiConfigPath, apiConfig);
   console.log('✅ src/config/api.js actualizado correctamente');

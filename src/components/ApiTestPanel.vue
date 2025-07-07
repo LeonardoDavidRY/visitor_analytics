@@ -1,16 +1,16 @@
 <template>
   <div class="api-test-panel bg-white rounded-lg shadow-md p-6 mb-6">
-    <h3 class="text-lg font-semibold mb-4 text-gray-800">🔧 Panel de Prueba API</h3>
+    <h3 class="text-lg font-semibold mb-4 text-gray-800">🔧 Panel de Prueba API (Online)</h3>
     
     <!-- URL actual -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">URL Actual:</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">URL API Online Actual:</label>
       <div class="bg-gray-100 p-2 rounded text-sm font-mono break-all">{{ currentUrl }}</div>
     </div>
 
     <!-- Actualizar URL -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Nueva URL (opcional):</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Nueva URL Online (opcional):</label>
       <div class="flex gap-2">
         <input 
           v-model="newUrl" 
@@ -35,7 +35,7 @@
         :disabled="loading"
         class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:bg-gray-300"
       >
-        {{ loading ? 'Probando...' : 'Probar Conexión' }}
+        {{ loading ? 'Probando...' : 'Probar API Online' }}
       </button>
       <button 
         @click="clearCache"

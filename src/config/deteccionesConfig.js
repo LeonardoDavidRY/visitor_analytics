@@ -1,10 +1,10 @@
 // Configuración para el uso de datos mock vs datos reales
 export const CONFIG = {
   // Cambiar a false para usar datos de la API real
-  USE_MOCK_DATA: true,
+  USE_MOCK_DATA: false,
   
   // Configuración de la API real
-  API_BASE_URL: process.env.VUE_APP_API_URL || 'http://localhost:8080',
+  API_BASE_URL: process.env.VUE_APP_API_URL || 'http://192.168.45.129:8080',
   
   // Configuración de datos mock
   MOCK_DATA_SOURCE: '@/data/mineria_db.detecciones.json',

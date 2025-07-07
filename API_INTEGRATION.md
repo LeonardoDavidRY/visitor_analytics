@@ -1,38 +1,69 @@
 # API Integration Documentation
 
-## Cambios Realizados
+## Configuración de APIs Dual
 
-Se ha modificado el proyecto para usar datos dinámicos de una API en lugar de datos locales estáticos. Los cambios principales incluyen:
+Se ha configurado el proyecto para usar **dos APIs diferentes** según el tipo de datos:
 
-### 1. Nuevo Servicio de API (`src/services/apiService.js`)
+### 1. API Online (ngrok) - Para datos generales de analytics
 
-- **URL de la API**: `https://84f7-35-234-1-134.ngrok-free.app/api/datos`
-- **Caché inteligente**: Los datos se almacenan en caché por 30 segundos para mejorar el rendimiento
-- **Manejo de errores**: Si la API falla, se usan datos en caché o datos por defecto
-- **Métodos específicos**: Para acceder a cada tipo de dato de forma independiente
+- **URL**: `https://cc25-34-23-145-148.ngrok-free.app/api/datos`
+- **Uso**: Datos de conteos generales (edad, género, hora, tipo, tablas cruzadas)
+- **Servicio**: `src/services/apiService.js`
+- **Headers**: Incluye `ngrok-skip-browser-warning: true`
 
-### 2. Estructura de Datos de la API
+### 2. API Local - Para detecciones en tiempo real
 
-La API devuelve la siguiente estructura:
+- **URL**: `http://192.168.45.129:8080/api/detecciones/timestamps`
+- **Uso**: Datos de detecciones específicas con timestamps
+- **Servicio**: `src/services/deteccionesService.js`
+- **Endpoints**:
+  - `/detecciones/timestamps` - Obtener lista de timestamps disponibles
+  - `/detecciones?segundo=<timestamp>` - Obtener detecciones para un timestamp específico
+
+### 3. Configuración de Proxy (vue.config.js)
+
+El proyecto usa un proxy para evitar problemas de CORS:
+
+```javascript
+proxy: {
+  '/api/datos': {
+    target: 'https://cc25-34-23-145-148.ngrok-free.app',
+    changeOrigin: true,
+    secure: true,
+    headers: {
+      'ngrok-skip-browser-warning': 'true'
+    }
+  },
+  '/api/detecciones': {
+    target: 'http://192.168.45.129:8080',
+    changeOrigin: true,
+    secure: false
+  }
+}
+```
+
+### 4. Estructura de Datos
+
+#### API Online (datos generales):
 
 ```json
 {
-  "conte_edad": {
+  "conteo_edad": {
     "18 -25": 6,
     "25 - 32": 4,
     "32 o mas": 1
   },
-  "conte_hora": {
+  "conteo_hora": {
     "12": 3,
     "22": 4,
     "7": 3,
     "8": 1
   },
-  "conte_sexo": {
+  "conteo_sexo": {
     "Femenino": 5,
     "Masculino": 6
   },
-  "conte_tipo": {
+  "conteo_tipo": {
     "Administrativo": 1,
     "Docente": 2,
     "Estudiante": 5,
@@ -46,8 +77,8 @@ La API devuelve la siguiente estructura:
       "Externo": 2
     },
     "25 - 32": {
-      "Administrativo": 1,
-      "Docente": 0,
+      "Administrativo": 0,
+      "Docente": 1,
       "Estudiante": 2,
       "Externo": 1
     },
@@ -61,7 +92,81 @@ La API devuelve la siguiente estructura:
 }
 ```
 
-### 3. Componentes Modificados
+#### API Local (detecciones):
+
+```json
+{
+  "success": true,
+  "timestamps": ["2024-01-01 10:00:00", "2024-01-01 10:00:01"],
+  "detecciones": [
+    {
+      "id": 1,
+      "timestamp": "2024-01-01 10:00:00",
+      "x": 100,
+      "y": 200,
+      "tipo": "Estudiante"
+    }
+  ]
+}
+```
+
+### 5. Scripts de Actualización de URLs
+
+#### Actualizar URL de ngrok (API Online):
+
+```bash
+node update-ngrok-url.js https://nueva-url.ngrok-free.app
+```
+
+#### Actualizar URL local:
+
+```bash
+node update-local-url.js http://192.168.45.129:8080
+```
+
+Estos scripts actualizan automáticamente:
+
+- `vue.config.js` - Configuración del proxy
+- `src/config/api.js` - URLs de las APIs
+
+### 6. Paneles de Prueba
+
+El dashboard incluye dos paneles de prueba:
+
+1. **Panel API Online**: Prueba la conexión con la API de ngrok
+2. **Panel API Local**: Prueba la conexión con la API local y permite seleccionar timestamps
+
+### 7. Caché Inteligente
+
+Ambos servicios implementan un sistema de caché:
+
+- **Tiempo de vida**: 30 segundos
+- **Invalidación manual**: Disponible en los paneles de prueba
+- **Fallback**: Datos en caché si la API falla
+
+### 8. Manejo de Errores
+
+- **Conexión fallida**: Usa datos en caché si están disponibles
+- **Datos por defecto**: Estructura vacía si no hay caché
+- **Logs detallados**: En consola para debugging
+
+## Uso
+
+1. **Desarrollo**: El proxy maneja automáticamente las peticiones
+2. **Producción**: Las URLs se configuran directamente en los servicios
+3. **Pruebas**: Usa los paneles de prueba en el dashboard
+
+## Configuración Inicial
+
+1. Asegúrate de que ambas APIs estén disponibles
+2. Actualiza las URLs si es necesario usando los scripts
+3. Reinicia el servidor de desarrollo si cambias la configuración del proxy
+
+```bash
+npm run serve
+```
+
+### 9. Componentes Modificados
 
 #### `TypePieChart.vue`
 - Ahora usa `apiService` en lugar de datos locales
@@ -87,11 +192,11 @@ La API devuelve la siguiente estructura:
 - Mantenidos los controles de tipo de gráfico (línea/barras)
 - Estados de carga y error
 
-### 4. Nuevo Componente: `CrossTableChart.vue`
+### 10. Nuevo Componente: `CrossTableChart.vue`
 
 Muestra la tabla cruzada de tipo por edad usando gráfico de barras agrupadas.
 
-### 5. Nuevo Dashboard: `ApiDashboard.vue`
+### 11. Nuevo Dashboard: `ApiDashboard.vue`
 
 Dashboard completo que muestra:
 - Cards de resumen con totales
@@ -100,7 +205,7 @@ Dashboard completo que muestra:
 - Botón de actualización global
 - Indicador de última actualización
 
-### 6. Características Principales
+### 12. Características Principales
 
 #### Actualización en Tiempo Real
 - Los datos se actualizan automáticamente cada 30 segundos
@@ -117,17 +222,17 @@ Dashboard completo que muestra:
 - Estados de carga consistentes
 - Colores predefinidos para mejor consistencia visual
 
-### 7. Rutas Agregadas
+### 13. Rutas Agregadas
 
 - `/api-dashboard`: Nuevo dashboard principal con datos de la API
 
-### 8. Instalación y Uso
+### 14. Instalación y Uso
 
 1. Asegúrate de que la API esté funcionando en `https://84f7-35-234-1-134.ngrok-free.app/api/datos`
 2. Los componentes se conectarán automáticamente y comenzarán a mostrar datos
 3. Si la API no está disponible, se mostrarán mensajes de error apropiados
 
-### 9. Configuración
+### 15. Configuración
 
 La URL de la API puede cambiarse editando el archivo `src/services/apiService.js`:
 
@@ -135,7 +240,7 @@ La URL de la API puede cambiarse editando el archivo `src/services/apiService.js
 this.baseUrl = 'https://nueva-url-api.com/api';
 ```
 
-### 10. Beneficios
+### 16. Beneficios
 
 - **Datos en tiempo real**: Los dashboards se actualizan automáticamente
 - **Sin dependencia de archivos locales**: Todo viene de la API

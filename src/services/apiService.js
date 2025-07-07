@@ -1,8 +1,8 @@
-import { API_CONFIG } from '@/config/api.js';
+import { API_CONFIG, getOnlineApiUrl, getApiHeaders } from '@/config/api.js';
 
 class ApiService {
   constructor() {
-    this.baseUrl = API_CONFIG.BASE_URL;
+    // Este servicio usa específicamente la API online para datos generales
     this.cache = null;
     this.lastFetch = null;
     this.cacheTimeout = API_CONFIG.CACHE_TIMEOUT;
@@ -17,13 +17,16 @@ class ApiService {
       return this.cache;
     }
 
-    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.DATOS}`;
-    console.log('🌐 Realizando petición a:', url);
-    console.log('📋 Headers:', API_CONFIG.HEADERS);
+    const url = getOnlineApiUrl(API_CONFIG.ENDPOINTS.DATOS);
+    const headers = getApiHeaders(false); // false = no es API local
+    
+    console.log('🌐 Realizando petición a API online:', url);
+    console.log('📋 Headers:', headers);
+    console.log('🔧 Usando proxy:', API_CONFIG.USE_PROXY);
 
     try {
       const response = await fetch(url, {
-        headers: API_CONFIG.HEADERS
+        headers: headers
       });
       
       if (!response.ok) {
@@ -31,7 +34,7 @@ class ApiService {
       }
       
       const data = await response.json();
-      console.log('✅ Datos recibidos exitosamente:', data);
+      console.log('✅ Datos recibidos exitosamente desde API online:', data);
       
       // Guardar en cache
       this.cache = data;
@@ -39,18 +42,18 @@ class ApiService {
       
       return data;
     } catch (error) {
-      console.error('❌ Error fetching data from API:', error);
+      console.error('❌ Error fetching data from online API:', error);
       console.error('🔍 URL intentada:', url);
-      console.error('📋 Headers usados:', API_CONFIG.HEADERS);
+      console.error('📋 Headers usados:', headers);
       
       // Si hay datos en cache, devolverlos aunque hayan expirado
       if (this.cache) {
-        console.warn('⚠️ Usando datos del cache debido al error de API');
+        console.warn('⚠️ Usando datos del cache debido al error de API online');
         return this.cache;
       }
       
       // Si no hay cache, devolver datos por defecto
-      console.warn('⚠️ Usando datos por defecto debido al error de API');
+      console.warn('⚠️ Usando datos por defecto debido al error de API online');
       return this.getDefaultData();
     }
   }
@@ -97,16 +100,17 @@ class ApiService {
     this.lastFetch = null;
   }
 
-  // Método para actualizar la URL base
+  // Método para actualizar la URL base (actualiza la URL online)
   updateBaseUrl(newUrl) {
-    this.baseUrl = newUrl;
-    API_CONFIG.BASE_URL = newUrl;
+    API_CONFIG.ONLINE_URL = newUrl;
     this.invalidateCache(); // Invalidar cache al cambiar URL
   }
 
   // Método para obtener la URL actual
   getCurrentUrl() {
-    return this.baseUrl;
+    return API_CONFIG.USE_PROXY ? 
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DATOS} (proxy a ${API_CONFIG.ONLINE_URL})` : 
+      `${API_CONFIG.ONLINE_URL}${API_CONFIG.ENDPOINTS.DATOS}`;
   }
 }
 

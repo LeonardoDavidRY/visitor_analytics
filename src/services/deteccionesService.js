@@ -1,8 +1,8 @@
-import { API_CONFIG } from '@/config/api.js';
+import { API_CONFIG, getLocalApiUrl, getApiHeaders } from '@/config/api.js';
 
 class DeteccionesService {
   constructor() {
-    this.baseUrl = API_CONFIG.BASE_URL;
+    // Este servicio usa específicamente la API local para detecciones
     this.timestampsCache = null;
     this.deteccionesCache = new Map(); // Cache por timestamp
     this.lastTimestampsFetch = null;
@@ -20,12 +20,20 @@ class DeteccionesService {
       return this.timestampsCache;
     }
 
-    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.TIMESTAMPS}`;
-    console.log('🌐 Realizando petición a:', url);
+    // Usar directamente la URL local para debugging
+    const url = `${API_CONFIG.LOCAL_URL}${API_CONFIG.ENDPOINTS.TIMESTAMPS}`;
+    const headers = getApiHeaders(false); // false = headers simples para CORS
+    
+    console.log('🌐 Realizando petición DIRECTA a API local:', url);
+    console.log('🔧 Headers:', headers);
+    console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+    console.log('🔍 Endpoint completo:', API_CONFIG.ENDPOINTS.TIMESTAMPS);
 
     try {
       const response = await fetch(url, {
-        headers: API_CONFIG.LOCAL_HEADERS
+        method: 'GET',
+        headers: headers,
+        mode: 'cors'
       });
       
       if (!response.ok) {
@@ -33,7 +41,7 @@ class DeteccionesService {
       }
       
       const data = await response.json();
-      console.log('✅ Timestamps recibidos exitosamente:', data);
+      console.log('✅ Timestamps recibidos exitosamente desde API local:', data);
       
       // Guardar en cache
       this.timestampsCache = data;
@@ -41,7 +49,7 @@ class DeteccionesService {
       
       return data;
     } catch (error) {
-      console.error('❌ Error fetching timestamps:', error);
+      console.error('❌ Error fetching timestamps from local API:', error);
       
       // Si hay datos en cache, devolverlos aunque hayan expirado
       if (this.timestampsCache) {
@@ -62,12 +70,17 @@ class DeteccionesService {
       return this.deteccionesCache.get(timestamp);
     }
 
-    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.DETECCIONES}?segundo=${encodeURIComponent(timestamp)}`;
-    console.log('🌐 Realizando petición a:', url);
+    // Usar directamente la URL local para debugging
+    const url = `${API_CONFIG.LOCAL_URL}${API_CONFIG.ENDPOINTS.DETECCIONES}?segundo=${encodeURIComponent(timestamp)}`;
+    const headers = getApiHeaders(false); // false = headers simples para CORS
+    
+    console.log('🌐 Realizando petición DIRECTA a API local:', url);
 
     try {
       const response = await fetch(url, {
-        headers: API_CONFIG.LOCAL_HEADERS
+        method: 'GET',
+        headers: headers,
+        mode: 'cors'
       });
       
       if (!response.ok) {
@@ -75,14 +88,14 @@ class DeteccionesService {
       }
       
       const data = await response.json();
-      console.log('✅ Detecciones recibidas exitosamente:', data);
+      console.log('✅ Detecciones recibidas exitosamente desde API local:', data);
       
       // Guardar en cache
       this.deteccionesCache.set(timestamp, data);
       
       return data;
     } catch (error) {
-      console.error('❌ Error fetching detecciones:', error);
+      console.error('❌ Error fetching detecciones from local API:', error);
       
       // Devolver estructura por defecto
       return this.getDefaultDetecciones(timestamp);
