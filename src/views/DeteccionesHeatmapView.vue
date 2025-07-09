@@ -60,33 +60,6 @@
         {{ error }}
       </div>
 
-      <!-- Panel de información -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 class="text-lg font-semibold mb-4 text-gray-800">
-          🗺️ Información del Mapa de Calor
-        </h3>
-        <div
-          class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600"
-        >
-          <div>
-            <strong>Fuente de datos:</strong><br />
-            {{ dataSourceInfo.source }}
-          </div>
-          <div>
-            <strong>Tipo de datos:</strong><br />
-            {{ dataSourceInfo.isMock ? 'Mock Data (JSON)' : 'API Real' }}
-          </div>
-          <div>
-            <strong>Formato:</strong><br />
-            {{ dataSourceInfo.isMock ? 'MongoDB JSON' : 'HTTP JSON' }}
-          </div>
-          <div>
-            <strong>Coordenadas:</strong><br />
-            Cartesianas (x, y)
-          </div>
-        </div>
-      </div>
-
       <!-- Componente principal -->
       <DeteccionesHeatmap ref="heatmapRef" />
 

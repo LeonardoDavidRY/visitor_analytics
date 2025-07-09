@@ -197,22 +197,30 @@
 
         <!-- Legend -->
         <div class="legend">
-          <h4>Leyenda</h4>
+          <h4>Mapa de Calor</h4>
           <div class="legend-item">
             <div class="legend-color person-detected"></div>
             <span>Persona detectada</span>
           </div>
           <div class="legend-item">
             <div class="legend-color high-activity"></div>
-            <span>Zona de alta actividad</span>
+            <span>Actividad muy alta</span>
           </div>
           <div class="legend-item">
             <div class="legend-color medium-activity"></div>
-            <span>Actividad media</span>
+            <span>Actividad moderada</span>
           </div>
           <div class="legend-item">
             <div class="legend-color low-activity"></div>
             <span>Actividad baja</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color group-indicator"></div>
+            <span>Grupo de personas (3+)</span>
+          </div>
+          <div class="legend-note">
+            <small>* Los números indican personas individuales</small>
+            <small>* Las zonas amarillas muestran grupos densos</small>
           </div>
         </div>
       </div>
@@ -529,8 +537,13 @@ const drawHeatmap = () => {
   if (!persistData.value) {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // Dibujar fondo
-    ctx.fillStyle = CONFIG.COLORS.BACKGROUND;
+    // Dibujar fondo con gradiente suave
+    const backgroundGradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+    backgroundGradient.addColorStop(0, '#f8fafc');
+    backgroundGradient.addColorStop(0.5, '#f1f5f9');
+    backgroundGradient.addColorStop(1, '#e2e8f0');
+    
+    ctx.fillStyle = backgroundGradient;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Dibujar grilla
@@ -594,10 +607,10 @@ const drawHeatmap = () => {
   const density = createDensityMap(allCoordinates, scaleX, scaleY, minX, minY);
   console.log(`🔥 Puntos de densidad creados: ${density.length}`);
 
-  // Dibujar mapa de calor
+  // Dibujar mapa de calor PRIMERO (fondo)
   drawHeatmapPoints(ctx, density);
 
-  // Dibujar puntos individuales
+  // Dibujar puntos individuales DESPUÉS (encima del mapa de calor)
   drawPoints(ctx, allCoordinates, scaleX, scaleY, minX, minY);
 
   // Guardar datos dibujados si no está en modo persistencia
@@ -610,13 +623,13 @@ const drawHeatmap = () => {
 };
 
 const createDensityMap = (coordinates, scaleX, scaleY, minX, minY) => {
-  const gridSize = CONFIG.CANVAS.GRID_SIZE;
+  const gridSize = 15; // Reducir el tamaño de grid para más resolución
   const density = [];
 
   for (let x = 0; x < canvasWidth; x += gridSize) {
     for (let y = 0; y < canvasHeight; y += gridSize) {
       let count = 0;
-      const radius = CONFIG.CANVAS.HEATMAP_RADIUS;
+      const radius = 60; // Aumentar el radio para mejor efecto de calor
 
       coordinates.forEach((coord) => {
         const pixelX = (coord.x - minX) * scaleX + 50;
@@ -624,7 +637,8 @@ const createDensityMap = (coordinates, scaleX, scaleY, minX, minY) => {
 
         const distance = Math.sqrt((x - pixelX) ** 2 + (y - pixelY) ** 2);
         if (distance < radius) {
-          count += Math.max(0, 1 - distance / radius);
+          // Función de decaimiento más suave
+          count += Math.pow(Math.max(0, 1 - distance / radius), 2);
         }
       });
 
@@ -647,35 +661,72 @@ const drawHeatmapPoints = (ctx, density) => {
   const maxIntensity = Math.max(...density.map((d) => d.intensity));
   console.log(`🔥 Intensidad máxima: ${maxIntensity}`);
 
-  density.forEach((point, index) => {
-    const alpha = Math.min(point.intensity / maxIntensity, 1);
+  // Ordenar por intensidad para dibujar los menos intensos primero
+  const sortedDensity = [...density].sort((a, b) => a.intensity - b.intensity);
 
-    // Gradiente de colores más visible: azul -> verde -> amarillo -> rojo
-    let red, green, blue;
-    if (alpha < 0.33) {
-      // Azul a verde
-      red = 0;
-      green = Math.floor(255 * (alpha / 0.33));
-      blue = Math.floor(255 * (1 - alpha / 0.33));
-    } else if (alpha < 0.66) {
-      // Verde a amarillo
-      red = Math.floor(255 * ((alpha - 0.33) / 0.33));
-      green = 255;
-      blue = 0;
+  sortedDensity.forEach((point, index) => {
+    const alpha = Math.min(point.intensity / maxIntensity, 1);
+    const radius = 40 + alpha * 25; // Radios más grandes para mejor efecto
+
+    // Crear gradiente radial para cada punto de calor
+    const gradient = ctx.createRadialGradient(
+      point.x, point.y, 0,
+      point.x, point.y, radius
+    );
+
+    // Colores más intensos y visibles para el mapa de calor
+    let color1, color2, color3;
+    if (alpha < 0.2) {
+      // Azul muy suave para actividad mínima
+      color1 = `rgba(59, 130, 246, ${alpha * 1.2})`;
+      color2 = `rgba(59, 130, 246, ${alpha * 0.6})`;
+      color3 = `rgba(59, 130, 246, 0)`;
+    } else if (alpha < 0.4) {
+      // Verde para actividad baja-media
+      color1 = `rgba(34, 197, 94, ${alpha * 1.3})`;
+      color2 = `rgba(34, 197, 94, ${alpha * 0.7})`;
+      color3 = `rgba(34, 197, 94, 0)`;
+    } else if (alpha < 0.7) {
+      // Amarillo para actividad media-alta
+      color1 = `rgba(251, 191, 36, ${alpha * 1.4})`;
+      color2 = `rgba(251, 191, 36, ${alpha * 0.8})`;
+      color3 = `rgba(251, 191, 36, 0)`;
     } else {
-      // Amarillo a rojo
-      red = 255;
-      green = Math.floor(255 * (1 - (alpha - 0.66) / 0.34));
-      blue = 0;
+      // Rojo intenso para actividad alta
+      color1 = `rgba(239, 68, 68, ${alpha * 1.5})`;
+      color2 = `rgba(239, 68, 68, ${alpha * 0.9})`;
+      color3 = `rgba(239, 68, 68, 0)`;
     }
 
-    ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, ${Math.max(
-      alpha * 0.8,
-      0.3
-    )})`;
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(0.4, color2);
+    gradient.addColorStop(1, color3);
+
+    // Aplicar modo de mezcla para mejor superposición
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(point.x, point.y, 20 + alpha * 10, 0, 2 * Math.PI);
+    ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
     ctx.fill();
+
+    // Capa adicional con modo screen para efecto luminoso
+    ctx.globalCompositeOperation = 'screen';
+    const innerRadius = radius * 0.6;
+    const innerGradient = ctx.createRadialGradient(
+      point.x, point.y, 0,
+      point.x, point.y, innerRadius
+    );
+    
+    if (alpha > 0.5) {
+      innerGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.4})`);
+      innerGradient.addColorStop(0.5, `rgba(255, 255, 255, ${alpha * 0.2})`);
+      innerGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      
+      ctx.fillStyle = innerGradient;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, innerRadius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
 
     if (index < 5) {
       console.log(
@@ -686,11 +737,48 @@ const drawHeatmapPoints = (ctx, density) => {
     }
   });
 
+  // Restaurar modo de mezcla normal
+  ctx.globalCompositeOperation = 'source-over';
+
   console.log('✅ Mapa de calor dibujado exitosamente');
 };
 
 const drawPoints = (ctx, coordinates, scaleX, scaleY, minX, minY) => {
   console.log(`🎨 Dibujando ${coordinates.length} puntos individuales`);
+
+  // Crear grupos de puntos cercanos para mostrar densidad
+  const groups = [];
+  const groupRadius = 30; // Radio para considerar puntos como grupo
+  
+  coordinates.forEach((coord, index) => {
+    const x = (coord.x - minX) * scaleX + 50;
+    const y = (coord.y - minY) * scaleY + 50;
+    
+    // Buscar si este punto pertenece a un grupo existente
+    let belongsToGroup = false;
+    for (let group of groups) {
+      const distance = Math.sqrt((x - group.centerX) ** 2 + (y - group.centerY) ** 2);
+      if (distance <= groupRadius) {
+        group.points.push({ coord, x, y, index });
+        // Recalcular centro del grupo
+        const avgX = group.points.reduce((sum, p) => sum + p.x, 0) / group.points.length;
+        const avgY = group.points.reduce((sum, p) => sum + p.y, 0) / group.points.length;
+        group.centerX = avgX;
+        group.centerY = avgY;
+        belongsToGroup = true;
+        break;
+      }
+    }
+    
+    // Si no pertenece a ningún grupo, crear uno nuevo
+    if (!belongsToGroup) {
+      groups.push({
+        centerX: x,
+        centerY: y,
+        points: [{ coord, x, y, index }]
+      });
+    }
+  });
 
   coordinates.forEach((coord, index) => {
     const x = (coord.x - minX) * scaleX + 50;
@@ -702,86 +790,217 @@ const drawPoints = (ctx, coordinates, scaleX, scaleY, minX, minY) => {
       )}, ${y.toFixed(1)})`
     );
 
-    // Efecto de pulsación - círculo exterior
+    // Círculo exterior más visible para mejor contraste
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 15);
+    gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+    gradient.addColorStop(0.7, 'rgba(102, 126, 234, 0.15)');
+    gradient.addColorStop(1, 'rgba(102, 126, 234, 0)');
+    
+    ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(x, y, 15, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.fill();
 
-    // Círculo principal de la persona
+    // Círculo principal de la persona más grande y visible
+    const personGradient = ctx.createRadialGradient(x - 1, y - 1, 0, x, y, 8);
+    personGradient.addColorStop(0, '#ff8a8a');
+    personGradient.addColorStop(1, '#ff4757');
+    
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = 'rgba(255, 71, 87, 0.4)';
     ctx.beginPath();
     ctx.arc(x, y, 8, 0, 2 * Math.PI);
-    ctx.fillStyle = '#ff6b6b';
+    ctx.fillStyle = personGradient;
     ctx.fill();
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 2;
+    
+    // Borde más visible para contraste
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Número de persona en el centro
+    // Número de persona más grande y visible
+    ctx.shadowBlur = 2;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 1;
+    
     ctx.fillStyle = 'white';
-    ctx.font = 'bold 10px Arial';
+    ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    
+    // Dibujar contorno negro para mejor legibilidad
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.strokeText((index + 1).toString(), x, y);
+    
+    // Dibujar el texto blanco encima
     ctx.fillText((index + 1).toString(), x, y);
+    
+    // Resetear sombra
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 
-    // Información de coordenadas cada 3 puntos
-    if (index % 3 === 0) {
-      ctx.fillStyle = CONFIG.COLORS.TEXT;
-      ctx.font = 'bold 10px Arial';
-      ctx.strokeStyle = CONFIG.COLORS.POINT_BORDER;
-      ctx.lineWidth = 2;
-      ctx.strokeText(
-        `(${Math.round(coord.x)}, ${Math.round(coord.y)})`,
-        x + 12,
-        y - 12
-      );
-      ctx.fillText(
-        `(${Math.round(coord.x)}, ${Math.round(coord.y)})`,
-        x + 12,
-        y - 12
-      );
+    // Información de coordenadas removida para mejor visualización del mapa de calor
+  });
+
+  // Dibujar indicadores de grupos con alta densidad
+  groups.forEach((group) => {
+    if (group.points.length >= 3) { // Solo mostrar para grupos de 3 o más personas
+      const { centerX, centerY, points } = group;
+      
+      // Círculo indicador de grupo
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, groupRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.setLineDash([]); // Resetear línea punteada
+      
+      // Etiqueta de densidad
+      const densityText = `${points.length}`;
+      ctx.fillStyle = 'rgba(255, 193, 7, 0.9)';
+      ctx.fillRect(centerX - 15, centerY - groupRadius - 25, 30, 20);
+      
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(centerX - 15, centerY - groupRadius - 25, 30, 20);
+      
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.lineWidth = 1;
+      ctx.strokeText(densityText, centerX, centerY - groupRadius - 15);
+      ctx.fillText(densityText, centerX, centerY - groupRadius - 15);
     }
   });
 
-  // Dibujar información de la detección en la esquina
+  // Resetear sombras
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // Agregar conteo total en esquina superior izquierda
   if (coordinates.length > 0) {
-    const info = `${coordinates.length} persona${
-      coordinates.length !== 1 ? 's' : ''
-    } detectada${coordinates.length !== 1 ? 's' : ''}`;
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.fillRect(10, 10, 280, 35);
-
+    const totalText = `Total: ${coordinates.length} personas`;
+    
+    // Fondo para el texto
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.9)';
+    ctx.fillRect(15, 15, 180, 30);
+    
+    // Borde
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(15, 15, 180, 30);
+    
+    // Texto
     ctx.fillStyle = 'white';
-    ctx.font = 'bold 14px Arial';
+    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(info, 20, 27);
+    ctx.fillText(totalText, 25, 30);
   }
 
   console.log('✅ Puntos dibujados exitosamente');
 };
 
 const drawGrid = (ctx) => {
-  ctx.strokeStyle = CONFIG.COLORS.GRID;
-  ctx.lineWidth = 1;
-
-  // Líneas verticales
-  for (let x = 50; x < canvasWidth; x += 50) {
+  const gridSpacing = 50;
+  const subGridSpacing = 25;
+  
+  // Líneas principales de la cuadrícula (más gruesas)
+  ctx.strokeStyle = 'rgba(200, 200, 200, 0.4)';
+  ctx.lineWidth = 1.5;
+  
+  // Líneas verticales principales
+  for (let x = 50; x < canvasWidth; x += gridSpacing) {
     ctx.beginPath();
     ctx.moveTo(x, 50);
     ctx.lineTo(x, canvasHeight - 50);
     ctx.stroke();
   }
-
-  // Líneas horizontales
-  for (let y = 50; y < canvasHeight; y += 50) {
+  
+  // Líneas horizontales principales
+  for (let y = 50; y < canvasHeight; y += gridSpacing) {
     ctx.beginPath();
     ctx.moveTo(50, y);
     ctx.lineTo(canvasWidth - 50, y);
     ctx.stroke();
   }
+  
+  // Líneas secundarias de la cuadrícula (más suaves)
+  ctx.strokeStyle = 'rgba(220, 220, 220, 0.3)';
+  ctx.lineWidth = 0.5;
+  
+  // Líneas verticales secundarias
+  for (let x = 50 + subGridSpacing; x < canvasWidth; x += subGridSpacing) {
+    if (x % gridSpacing !== 0) { // Solo dibujar si no es línea principal
+      ctx.beginPath();
+      ctx.moveTo(x, 50);
+      ctx.lineTo(x, canvasHeight - 50);
+      ctx.stroke();
+    }
+  }
+  
+  // Líneas horizontales secundarias
+  for (let y = 50 + subGridSpacing; y < canvasHeight; y += subGridSpacing) {
+    if (y % gridSpacing !== 0) { // Solo dibujar si no es línea principal
+      ctx.beginPath();
+      ctx.moveTo(50, y);
+      ctx.lineTo(canvasWidth - 50, y);
+      ctx.stroke();
+    }
+  }
+  
+  // Ejes principales (X e Y)
+  ctx.strokeStyle = 'rgba(100, 100, 100, 0.6)';
+  ctx.lineWidth = 2;
+  
+  // Eje X (horizontal central)
+  const centerY = canvasHeight / 2;
+  ctx.beginPath();
+  ctx.moveTo(50, centerY);
+  ctx.lineTo(canvasWidth - 50, centerY);
+  ctx.stroke();
+  
+  // Eje Y (vertical central)
+  const centerX = canvasWidth / 2;
+  ctx.beginPath();
+  ctx.moveTo(centerX, 50);
+  ctx.lineTo(centerX, canvasHeight - 50);
+  ctx.stroke();
+  
+  // Etiquetas de los ejes
+  ctx.fillStyle = 'rgba(100, 100, 100, 0.7)';
+  ctx.font = '12px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  // Etiquetas del eje X
+  for (let x = 50; x < canvasWidth; x += gridSpacing) {
+    const value = Math.round((x - 50) / gridSpacing);
+    if (value % 2 === 0) { // Solo mostrar cada 2 números para evitar saturación
+      ctx.fillText(value.toString(), x, canvasHeight - 30);
+    }
+  }
+  
+  // Etiquetas del eje Y
+  for (let y = 50; y < canvasHeight; y += gridSpacing) {
+    const value = Math.round((canvasHeight - y - 50) / gridSpacing);
+    if (value % 2 === 0) { // Solo mostrar cada 2 números para evitar saturación
+      ctx.fillText(value.toString(), 30, y);
+    }
+  }
+  
+  // Borde del área de trabajo
+  ctx.strokeStyle = 'rgba(150, 150, 150, 0.8)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(50, 50, canvasWidth - 100, canvasHeight - 100);
 };
 
 const formatTimestamp = (timestamp, short = false) => {
@@ -1390,31 +1609,49 @@ onBeforeUnmount(() => {
 .heatmap-canvas-container {
   position: relative;
   width: 100%;
-  height: 600px;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
+  height: 500px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .heatmap-canvas {
   width: 100%;
   height: 100%;
+  max-width: 1000px;
+  max-height: 450px;
   cursor: crosshair;
   display: block;
+  border-radius: 16px;
+  transition: transform 0.2s ease;
+  object-fit: contain;
+}
+
+.heatmap-canvas:hover {
+  transform: scale(1.002);
 }
 
 .legend {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 20px;
+  right: 20px;
   background: rgba(255, 255, 255, 0.95);
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 20;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .legend h4 {
@@ -1432,33 +1669,59 @@ onBeforeUnmount(() => {
 }
 
 .legend-color {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.legend-item:hover .legend-color {
+  transform: scale(1.1);
 }
 
 .legend-color.person-detected {
-  background: #ff6b6b;
+  background: linear-gradient(45deg, #ff8a8a, #ff4757);
 }
 
 .legend-color.high-activity {
-  background: #ff3838;
+  background: linear-gradient(45deg, #ef4444, #dc2626);
 }
 
 .legend-color.medium-activity {
-  background: #ffd93d;
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
 }
 
 .legend-color.low-activity {
-  background: #74c0fc;
+  background: linear-gradient(45deg, #60a5fa, #3b82f6);
+}
+
+.legend-color.group-indicator {
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  border: 2px dashed rgba(255, 255, 255, 0.8);
 }
 
 .legend-item span {
   font-size: 0.9em;
   color: #495057;
   font-weight: 500;
+}
+
+.legend-note {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.legend-note small {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.8em;
+  display: block;
+  margin-bottom: 3px;
 }
 
 .no-data {
@@ -1546,7 +1809,8 @@ onBeforeUnmount(() => {
   }
 
   .heatmap-canvas-container {
-    height: 400px;
+    height: 350px;
+    max-width: 100%;
   }
 
   .legend {

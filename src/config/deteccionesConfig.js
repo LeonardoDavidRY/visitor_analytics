@@ -11,8 +11,8 @@ export const CONFIG = {
   
   // Configuración del canvas
   CANVAS: {
-    WIDTH: 800,
-    HEIGHT: 600,
+    WIDTH: 1000,
+    HEIGHT: 450,
     GRID_SIZE: 20,
     HEATMAP_RADIUS: 30,
     POINT_RADIUS: 6
