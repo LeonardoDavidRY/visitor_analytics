@@ -195,7 +195,7 @@
           class="heatmap-canvas"
         ></canvas>
 
-        <!-- Legend -->
+        <!-- Legend 
         <div class="legend">
           <h4>Mapa de Calor</h4>
           <div class="legend-item">
@@ -222,7 +222,7 @@
             <small>* Los números indican personas individuales</small>
             <small>* Las zonas amarillas muestran grupos densos</small>
           </div>
-        </div>
+        </div>-->
       </div>
     </div>
 

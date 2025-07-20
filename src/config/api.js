@@ -4,10 +4,10 @@ export const API_CONFIG = {
   BASE_URL: '/api',
   
   // URL directa para la API online (ngrok) - solo para referencia
-  ONLINE_URL: 'https://cc25-34-23-145-148.ngrok-free.app/api',
+  ONLINE_URL: 'https://bdb48043244f.ngrok-free.app/api',
   
   // URL local para detecciones (localhost)
-  LOCAL_URL: 'http://192.168.45.129:8080/api',
+  LOCAL_URL: 'http://10.119.2.148:8080/api',
   
   // Configuración de entorno
   USE_PROXY: process.env.NODE_ENV === 'development',

@@ -4,7 +4,7 @@ export const CONFIG = {
   USE_MOCK_DATA: false,
   
   // Configuración de la API real
-  API_BASE_URL: process.env.VUE_APP_API_URL || 'http://192.168.45.129:8080',
+  API_BASE_URL: process.env.VUE_APP_API_URL || 'http://10.119.2.148:8080',
   
   // Configuración de datos mock
   MOCK_DATA_SOURCE: '@/data/mineria_db.detecciones.json',

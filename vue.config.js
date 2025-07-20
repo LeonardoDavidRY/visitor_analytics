@@ -5,7 +5,7 @@ module.exports = defineConfig({
     proxy: {
       // Proxy para la API online (ngrok)
       '/api/datos': {
-        target: 'https://cc25-34-23-145-148.ngrok-free.app',
+        target: 'https://bdb48043244f.ngrok-free.app',
         changeOrigin: true,
         secure: true,
         headers: {
@@ -17,7 +17,7 @@ module.exports = defineConfig({
       },
       // Proxy para la API local (detecciones y timestamps)
       '/api/detecciones': {
-        target: 'http://192.168.45.129:8080',
+        target: 'http://10.119.2.148:8080',
         changeOrigin: true,
         secure: false,
         ws: true,
